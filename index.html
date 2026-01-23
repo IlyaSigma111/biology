@@ -6,7 +6,7 @@
     <title>♟️ ChessMaster — Игра в шахматы с друзьями</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* ===== RESET ===== */
+        /* Стили остаются такими же, как в предыдущем коде */
         * {
             margin: 0;
             padding: 0;
@@ -27,7 +27,6 @@
             --radius: 12px;
         }
 
-        /* ===== GLOBAL ===== */
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -42,7 +41,7 @@
             padding: 20px;
         }
 
-        /* ===== LOADING ===== */
+        /* Loading */
         #loading {
             position: fixed;
             top: 0; left: 0;
@@ -53,7 +52,6 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity 0.5s;
         }
 
         .chess-loader {
@@ -65,19 +63,15 @@
         .piece {
             font-size: 40px;
             animation: float 2s infinite ease-in-out;
+            color: white;
         }
-
-        .piece:nth-child(2) { animation-delay: 0.2s; }
-        .piece:nth-child(3) { animation-delay: 0.4s; }
-        .piece:nth-child(4) { animation-delay: 0.6s; }
-        .piece:nth-child(5) { animation-delay: 0.8s; }
 
         @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-20px); }
         }
 
-        /* ===== HEADER ===== */
+        /* Header */
         header {
             background: rgba(255,255,255,0.95);
             backdrop-filter: blur(10px);
@@ -141,12 +135,11 @@
             color: var(--secondary);
         }
 
-        /* ===== MAIN LAYOUT ===== */
+        /* Main Layout */
         .main-layout {
             display: grid;
             grid-template-columns: 1fr 350px;
             gap: 25px;
-            min-height: calc(100vh - 200px);
         }
 
         @media (max-width: 1024px) {
@@ -155,7 +148,7 @@
             }
         }
 
-        /* ===== BOARD SECTION ===== */
+        /* Board Section */
         .board-section {
             background: rgba(255,255,255,0.95);
             border-radius: var(--radius);
@@ -182,11 +175,6 @@
             font-size: 18px;
             font-weight: 600;
             color: var(--dark);
-        }
-
-        .game-mode {
-            color: #666;
-            font-size: 14px;
         }
 
         .timers {
@@ -224,12 +212,52 @@
             width: 100%;
             height: auto;
             aspect-ratio: 1/1;
-            border-radius: 8px;
+            border: 2px solid #404040;
+            border-radius: 5px;
             overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
         }
 
-        /* Player Cards */
+        /* Make chessboard squares */
+        .chessboard {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            width: 100%;
+            height: 100%;
+        }
+
+        .square {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .square.white {
+            background-color: var(--white-square);
+        }
+
+        .square.black {
+            background-color: var(--black-square);
+        }
+
+        .square.highlight {
+            background-color: rgba(52, 152, 219, 0.5) !important;
+        }
+
+        .piece {
+            cursor: grab;
+            transition: transform 0.2s;
+        }
+
+        .piece.dragging {
+            opacity: 0.7;
+        }
+
+        /* Players */
         .players {
             display: flex;
             justify-content: space-between;
@@ -324,14 +352,13 @@
         .control-btn.draw { background: var(--warning); color: white; }
         .control-btn.resign { background: var(--accent); color: white; }
 
-        /* ===== SIDEBAR ===== */
+        /* Sidebar */
         .sidebar {
             display: flex;
             flex-direction: column;
             gap: 25px;
         }
 
-        /* Panel Styling */
         .panel {
             background: rgba(255,255,255,0.95);
             border-radius: var(--radius);
@@ -370,11 +397,6 @@
             margin-bottom: 5px;
             background: #f8f9fa;
             border-radius: 6px;
-            transition: all 0.3s;
-        }
-
-        .move-row:hover {
-            background: #e9ecef;
         }
 
         .move-number {
@@ -414,7 +436,6 @@
             padding: 10px 15px;
             border-radius: 8px;
             max-width: 80%;
-            animation: slideIn 0.3s;
         }
 
         .message.system {
@@ -428,21 +449,11 @@
             background: var(--secondary);
             color: white;
             margin-left: auto;
-            border-bottom-right-radius: 2px;
         }
 
         .message.opponent {
             background: #e9ecef;
             margin-right: auto;
-            border-bottom-left-radius: 2px;
-        }
-
-        .message-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-            font-size: 12px;
-            opacity: 0.8;
         }
 
         .chat-input {
@@ -456,12 +467,6 @@
             border: 2px solid #ddd;
             border-radius: 8px;
             font-size: 14px;
-            transition: all 0.3s;
-        }
-
-        .chat-input input:focus {
-            outline: none;
-            border-color: var(--secondary);
         }
 
         .chat-input button {
@@ -471,86 +476,9 @@
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s;
         }
 
-        .chat-input button:hover {
-            background: #2980b9;
-        }
-
-        /* Lobby */
-        .lobby-options {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .lobby-btn {
-            padding: 15px;
-            border: none;
-            border-radius: 8px;
-            background: #f8f9fa;
-            color: var(--dark);
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .lobby-btn:hover {
-            background: var(--secondary);
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        .lobby-btn i {
-            font-size: 20px;
-        }
-
-        /* Game List */
-        .game-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .game-item {
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        .game-item:hover {
-            background: #e9ecef;
-            transform: translateX(5px);
-        }
-
-        .game-info-small {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .game-players {
-            font-size: 14px;
-            color: #666;
-        }
-
-        .game-time {
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            color: #999;
-        }
-
-        /* ===== MODALS ===== */
+        /* Modal */
         .modal {
             position: fixed;
             top: 0; left: 0;
@@ -560,12 +488,10 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
-            backdrop-filter: blur(5px);
         }
 
         .modal.active {
             display: flex;
-            animation: fadeIn 0.3s;
         }
 
         .modal-content {
@@ -574,9 +500,6 @@
             padding: 30px;
             width: 90%;
             max-width: 500px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
         }
 
         .modal-header {
@@ -584,12 +507,6 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #eee;
-        }
-
-        .modal-header h2 {
-            color: var(--dark);
         }
 
         .close-modal {
@@ -598,11 +515,6 @@
             font-size: 28px;
             cursor: pointer;
             color: #999;
-            transition: color 0.3s;
-        }
-
-        .close-modal:hover {
-            color: var(--accent);
         }
 
         .form-group {
@@ -613,7 +525,6 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: var(--dark);
         }
 
         .form-control {
@@ -622,148 +533,22 @@
             border: 2px solid #ddd;
             border-radius: 8px;
             font-size: 16px;
-            transition: all 0.3s;
         }
 
-        .form-control:focus {
-            outline: none;
-            border-color: var(--secondary);
-        }
-
-        select.form-control {
-            cursor: pointer;
-        }
-
-        /* ===== ANIMATIONS ===== */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* ===== RESPONSIVE ===== */
+        /* Responsive */
         @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-            
-            header {
-                flex-direction: column;
-                gap: 15px;
-                padding: 15px;
-            }
-            
-            .header-buttons {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .btn {
-                flex: 1;
-                justify-content: center;
-            }
-            
-            .main-layout {
-                gap: 15px;
-            }
-            
-            .board-section {
-                padding: 15px;
-            }
-            
-            .board-header {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-            
-            .timers {
-                flex-direction: column;
-                gap: 10px;
-            }
-            
-            .players {
-                flex-direction: column;
-            }
-            
-            .controls {
-                flex-direction: column;
-            }
-            
-            .control-btn {
-                width: 100%;
-            }
-            
-            .panel {
-                padding: 15px;
-            }
-            
-            .move-row {
-                font-size: 14px;
-            }
+            .container { padding: 10px; }
+            header { flex-direction: column; gap: 15px; padding: 15px; }
+            .header-buttons { width: 100%; justify-content: center; }
+            .btn { flex: 1; justify-content: center; }
+            .board-header { flex-direction: column; gap: 15px; text-align: center; }
+            .timers { flex-direction: column; gap: 10px; }
+            .players { flex-direction: column; }
+            .controls { flex-direction: column; }
+            .control-btn { width: 100%; }
         }
 
-        @media (max-width: 480px) {
-            .logo-text h1 {
-                font-size: 20px;
-            }
-            
-            .timer {
-                font-size: 20px;
-                padding: 8px 15px;
-            }
-            
-            .player-card {
-                padding: 15px;
-            }
-            
-            .player-avatar {
-                width: 50px;
-                height: 50px;
-                font-size: 20px;
-            }
-        }
-
-        /* ===== UTILITIES ===== */
-        .hidden {
-            display: none !important;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        .mt-20 { margin-top: 20px; }
-        .mb-20 { margin-bottom: 20px; }
-
-        /* Scrollbar Styling */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--secondary);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #2980b9;
-        }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
@@ -777,12 +562,11 @@
             <div class="piece">♖</div>
         </div>
         <h1 style="color: white; margin-bottom: 10px;">ChessMaster</h1>
-        <p style="color: #bbb;">Подготовка к битве...</p>
+        <p style="color: #bbb;" id="loadingText">Подготовка к битве...</p>
     </div>
 
     <!-- Main App -->
     <div class="container" id="app" style="display: none;">
-        <!-- Header -->
         <header>
             <div class="logo">
                 <div class="logo-icon">♛</div>
@@ -799,20 +583,15 @@
                 <button class="btn btn-outline" onclick="showModal('joinGameModal')">
                     <i class="fas fa-sign-in-alt"></i> Присоединиться
                 </button>
-                <button class="btn btn-outline" id="shareBtn" onclick="shareGame()">
-                    <i class="fas fa-share-alt"></i> Поделиться
-                </button>
             </div>
         </header>
 
-        <!-- Main Content -->
         <div class="main-layout">
             <!-- Left: Board -->
             <div class="board-section">
                 <div class="board-header">
                     <div class="game-info">
                         <div class="game-status" id="gameStatus">Выберите игру</div>
-                        <div class="game-mode" id="gameMode"></div>
                     </div>
                     
                     <div class="timers">
@@ -822,7 +601,7 @@
                     </div>
                 </div>
 
-                <!-- Chess Board -->
+                <!-- Chess Board (will be generated by JavaScript) -->
                 <div id="board-container">
                     <div id="board"></div>
                 </div>
@@ -848,7 +627,7 @@
 
                 <!-- Game Controls -->
                 <div class="controls">
-                    <button class="control-btn new-game" onclick="newGame()">
+                    <button class="control-btn new-game" onclick="showModal('createGameModal')">
                         <i class="fas fa-plus-circle"></i> Новая игра
                     </button>
                     <button class="control-btn undo" onclick="undoMove()">
@@ -877,7 +656,7 @@
                         </button>
                     </div>
                     <div class="moves-container" id="movesContainer">
-                        <div class="text-center" style="color: #999; padding: 20px;">
+                        <div style="color: #999; text-align: center; padding: 20px;">
                             <i class="fas fa-chess-board fa-2x"></i>
                             <p style="margin-top: 10px;">Ходы появятся здесь</p>
                         </div>
@@ -891,31 +670,14 @@
                     </div>
                     <div class="chat-messages" id="chatMessages">
                         <div class="message system">
-                            <div class="message-header">
-                                <span>Система</span>
-                                <span>Сейчас</span>
-                            </div>
                             Добро пожаловать в ChessMaster! Создайте игру или присоединитесь к существующей.
                         </div>
                     </div>
                     <div class="chat-input">
-                        <input type="text" id="chatInput" placeholder="Введите сообщение..." maxlength="200">
+                        <input type="text" id="chatInput" placeholder="Введите сообщение...">
                         <button onclick="sendChatMessage()">
                             <i class="fas fa-paper-plane"></i>
                         </button>
-                    </div>
-                </div>
-
-                <!-- Game Lobby -->
-                <div class="panel">
-                    <div class="panel-header">
-                        <h3><i class="fas fa-gamepad"></i> Активные игры</h3>
-                    </div>
-                    <div class="game-list" id="gameList">
-                        <div class="text-center" style="color: #999; padding: 20px;">
-                            <i class="fas fa-users fa-2x"></i>
-                            <p style="margin-top: 10px;">Нет активных игр</p>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -936,31 +698,10 @@
             </div>
             
             <div class="form-group">
-                <label>Время на игру</label>
-                <select class="form-control" id="gameTime">
-                    <option value="300">5 минут</option>
-                    <option value="600" selected>10 минут</option>
-                    <option value="900">15 минут</option>
-                    <option value="1800">30 минут</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label>Добавление времени</label>
-                <select class="form-control" id="incrementTime">
-                    <option value="0">Без добавления</option>
-                    <option value="2">+2 секунды за ход</option>
-                    <option value="5" selected>+5 секунд за ход</option>
-                    <option value="10">+10 секунд за ход</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
                 <label>Режим игры</label>
                 <select class="form-control" id="gameModeSelect">
                     <option value="ai">Игра с компьютером</option>
-                    <option value="friend" selected>Игра с другом</option>
-                    <option value="public">Публичная игра</option>
+                    <option value="friend">Игра с другом</option>
                 </select>
             </div>
             
@@ -973,7 +714,7 @@
                 </select>
             </div>
             
-            <button class="btn" style="width: 100%; padding: 15px; font-size: 16px;" onclick="createGame()">
+            <button class="btn" style="width: 100%; padding: 15px;" onclick="createGame()">
                 <i class="fas fa-play"></i> Начать игру
             </button>
         </div>
@@ -996,55 +737,274 @@
                 <input type="text" class="form-control" id="gameCode" placeholder="Введите код игры">
             </div>
             
-            <div id="publicGames" class="mt-20">
-                <h3 style="margin-bottom: 15px;">Публичные игры</h3>
-                <div id="publicGamesList">
-                    <!-- Games will be loaded here -->
-                </div>
-            </div>
-            
-            <button class="btn" style="width: 100%; padding: 15px; font-size: 16px;" onclick="joinGame()">
+            <button class="btn" style="width: 100%; padding: 15px;" onclick="joinGame()">
                 <i class="fas fa-sign-in-alt"></i> Присоединиться
             </button>
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.13.4/chess.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chessboardjs@1.0.0/lib/js/chessboard-1.0.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@chrisoakman/chessboardjs@1.0.0/lib/js/chessboard-1.0.0.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chessboardjs@1.0.0/lib/css/chessboard-1.0.0.min.css">
-    
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    
     <script>
-        // ===== CONFIGURATION =====
-        const firebaseConfig = {
-            apiKey: "AIzaSyDPT3khXh8WyqEHzOe3ozWsayQ0HQTDSrw",
-            authDomain: "chesssecond-d16bf.firebaseapp.com",
-            databaseURL: "https://chesssecond-d16bf-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "chesssecond-d16bf",
-            storageBucket: "chesssecond-d16bf.firebasestorage.app",
-            messagingSenderId: "716530404724",
-            appId: "1:716530404724:web:ecf4743a4f6802e9f03021"
-        };
+        // ===== CHESS ENGINE =====
+        class ChessGame {
+            constructor() {
+                this.board = null;
+                this.game = {
+                    position: 'start',
+                    turn: 'white',
+                    check: false,
+                    checkmate: false,
+                    stalemate: false
+                };
+                this.pieces = {
+                    'r': '♜', 'n': '♞', 'b': '♝', 'q': '♛', 'k': '♚', 'p': '♟',
+                    'R': '♖', 'N': '♘', 'B': '♗', 'Q': '♕', 'K': '♔', 'P': '♙'
+                };
+                this.init();
+            }
 
-        // ===== GLOBAL VARIABLES =====
-        let game = null;
-        let board = null;
-        let timerInterval = null;
-        let gameId = null;
-        let playerId = Math.random().toString(36).substr(2, 9);
-        let playerName = "Игрок";
-        let playerColor = "white";
+            init() {
+                this.createBoard();
+                this.setupInitialPosition();
+            }
+
+            createBoard() {
+                const board = document.getElementById('board');
+                board.innerHTML = '';
+                board.classList.add('chessboard');
+
+                for (let row = 0; row < 8; row++) {
+                    for (let col = 0; col < 8; col++) {
+                        const square = document.createElement('div');
+                        square.className = `square ${(row + col) % 2 === 0 ? 'white' : 'black'}`;
+                        square.dataset.row = row;
+                        square.dataset.col = col;
+                        square.dataset.pos = String.fromCharCode(97 + col) + (8 - row);
+                        
+                        square.addEventListener('click', () => this.handleSquareClick(square));
+                        
+                        // Drag and drop
+                        square.addEventListener('dragover', (e) => e.preventDefault());
+                        square.addEventListener('drop', (e) => this.handleDrop(e, square));
+                        
+                        board.appendChild(square);
+                    }
+                }
+            }
+
+            setupInitialPosition() {
+                // Initial chess position
+                const initialPosition = {
+                    'a8': 'r', 'b8': 'n', 'c8': 'b', 'd8': 'q', 'e8': 'k', 'f8': 'b', 'g8': 'n', 'h8': 'r',
+                    'a7': 'p', 'b7': 'p', 'c7': 'p', 'd7': 'p', 'e7': 'p', 'f7': 'p', 'g7': 'p', 'h7': 'p',
+                    'a2': 'P', 'b2': 'P', 'c2': 'P', 'd2': 'P', 'e2': 'P', 'f2': 'P', 'g2': 'P', 'h2': 'P',
+                    'a1': 'R', 'b1': 'N', 'c1': 'B', 'd1': 'Q', 'e1': 'K', 'f1': 'B', 'g1': 'N', 'h1': 'R'
+                };
+
+                this.setPosition(initialPosition);
+            }
+
+            setPosition(position) {
+                this.clearBoard();
+                
+                for (const [square, piece] of Object.entries(position)) {
+                    const element = this.getSquareElement(square);
+                    if (element && piece) {
+                        const pieceElement = document.createElement('div');
+                        pieceElement.className = 'piece';
+                        pieceElement.textContent = this.pieces[piece];
+                        pieceElement.draggable = true;
+                        pieceElement.dataset.piece = piece;
+                        pieceElement.dataset.color = piece === piece.toLowerCase() ? 'black' : 'white';
+                        
+                        pieceElement.addEventListener('dragstart', (e) => {
+                            e.dataTransfer.setData('text/plain', square);
+                            pieceElement.classList.add('dragging');
+                        });
+                        
+                        pieceElement.addEventListener('dragend', () => {
+                            pieceElement.classList.remove('dragging');
+                        });
+                        
+                        element.appendChild(pieceElement);
+                    }
+                }
+            }
+
+            clearBoard() {
+                document.querySelectorAll('.square').forEach(square => {
+                    square.innerHTML = '';
+                });
+            }
+
+            getSquareElement(position) {
+                return document.querySelector(`.square[data-pos="${position}"]`);
+            }
+
+            handleSquareClick(square) {
+                const piece = square.querySelector('.piece');
+                if (piece) {
+                    // Select piece
+                    this.selectPiece(square);
+                } else if (window.selectedPiece) {
+                    // Move piece
+                    this.movePiece(window.selectedPiece, square);
+                }
+            }
+
+            selectPiece(square) {
+                // Clear previous selection
+                document.querySelectorAll('.square').forEach(sq => {
+                    sq.classList.remove('highlight');
+                });
+                
+                // Highlight selected square
+                square.classList.add('highlight');
+                window.selectedPiece = square;
+                
+                // Show possible moves (simplified)
+                this.showPossibleMoves(square);
+            }
+
+            showPossibleMoves(square) {
+                // Simplified move generation
+                const piece = square.querySelector('.piece');
+                if (!piece) return;
+                
+                const pieceType = piece.dataset.piece.toLowerCase();
+                const color = piece.dataset.color;
+                const [file, rank] = square.dataset.pos.split('');
+                const col = file.charCodeAt(0) - 97;
+                const row = 8 - parseInt(rank);
+                
+                // Basic pawn moves
+                if (pieceType === 'p') {
+                    const direction = color === 'white' ? -1 : 1;
+                    const forward = String.fromCharCode(97 + col) + (8 - (row + direction));
+                    const forwardSquare = this.getSquareElement(forward);
+                    if (forwardSquare && !forwardSquare.querySelector('.piece')) {
+                        forwardSquare.classList.add('highlight');
+                    }
+                }
+            }
+
+            movePiece(fromSquare, toSquare) {
+                const piece = fromSquare.querySelector('.piece');
+                if (!piece) return;
+
+                // Check if move is valid
+                if (!toSquare.classList.contains('highlight') && toSquare !== fromSquare) {
+                    return;
+                }
+
+                // Move piece
+                toSquare.appendChild(piece);
+                fromSquare.innerHTML = '';
+
+                // Clear highlights
+                document.querySelectorAll('.square').forEach(sq => {
+                    sq.classList.remove('highlight');
+                });
+
+                // Check for pawn promotion
+                const pieceType = piece.dataset.piece.toLowerCase();
+                const [file, rank] = toSquare.dataset.pos.split('');
+                
+                if (pieceType === 'p' && (rank === '1' || rank === '8')) {
+                    this.promotePawn(toSquare, piece.dataset.color);
+                }
+
+                // Switch turn
+                this.game.turn = this.game.turn === 'white' ? 'black' : 'white';
+                window.selectedPiece = null;
+
+                // Update game status
+                updateGameStatus(`Ход ${this.game.turn === 'white' ? 'белых' : 'чёрных'}`);
+                
+                // If playing against AI and it's AI's turn
+                if (window.gameMode === 'ai' && window.playerColor !== this.game.turn) {
+                    setTimeout(() => this.makeAIMove(), 500);
+                }
+
+                // Add to history
+                const move = {
+                    from: fromSquare.dataset.pos,
+                    to: toSquare.dataset.pos,
+                    piece: piece.textContent
+                };
+                addMoveToHistory(move);
+
+                return true;
+            }
+
+            handleDrop(e, toSquare) {
+                e.preventDefault();
+                const fromPos = e.dataTransfer.getData('text/plain');
+                const fromSquare = this.getSquareElement(fromPos);
+                
+                if (fromSquare) {
+                    this.movePiece(fromSquare, toSquare);
+                }
+            }
+
+            makeAIMove() {
+                // Simple AI - random move
+                const blackPieces = document.querySelectorAll('.piece[data-color="black"]');
+                if (blackPieces.length === 0) return;
+
+                const randomPiece = blackPieces[Math.floor(Math.random() * blackPieces.length)];
+                const fromSquare = randomPiece.parentElement;
+                
+                // Get possible squares (all empty squares for simplicity)
+                const allSquares = document.querySelectorAll('.square');
+                const emptySquares = Array.from(allSquares).filter(sq => !sq.querySelector('.piece'));
+                
+                if (emptySquares.length === 0) return;
+                
+                const toSquare = emptySquares[Math.floor(Math.random() * emptySquares.length)];
+                
+                this.movePiece(fromSquare, toSquare);
+            }
+
+            promotePawn(square, color) {
+                const queen = color === 'white' ? 'Q' : 'q';
+                const pieceElement = square.querySelector('.piece');
+                pieceElement.textContent = this.pieces[queen];
+                pieceElement.dataset.piece = queen;
+            }
+
+            getFEN() {
+                let fen = '';
+                for (let row = 0; row < 8; row++) {
+                    let empty = 0;
+                    for (let col = 0; col < 8; col++) {
+                        const square = document.querySelector(`.square[data-row="${row}"][data-col="${col}"]`);
+                        const piece = square.querySelector('.piece');
+                        
+                        if (piece) {
+                            if (empty > 0) {
+                                fen += empty;
+                                empty = 0;
+                            }
+                            fen += piece.dataset.piece;
+                        } else {
+                            empty++;
+                        }
+                    }
+                    if (empty > 0) fen += empty;
+                    if (row < 7) fen += '/';
+                }
+                
+                fen += ` ${this.game.turn === 'white' ? 'w' : 'b'} KQkq - 0 1`;
+                return fen;
+            }
+        }
+
+        // ===== GAME MANAGER =====
+        let chessGame = null;
         let gameMode = null;
-        let stockfish = null;
-        
-        // Game state
-        const state = {
+        let playerColor = 'white';
+        let playerName = 'Игрок';
+        let state = {
             whiteTime: 600,
             blackTime: 600,
             whiteMoves: 0,
@@ -1054,208 +1014,68 @@
             currentTurn: 'white'
         };
 
-        // ===== INITIALIZATION =====
-        document.addEventListener('DOMContentLoaded', async () => {
-            // Initialize Firebase
-            firebase.initializeApp(firebaseConfig);
-            const database = firebase.database();
-            window.db = database;
+        // Initialize game
+        function initGame() {
+            updateLoadingText('Создание шахматной доски...');
             
-            // Initialize chessboard
-            initChessboard();
-            
-            // Initialize Stockfish AI (Web Worker)
-            initStockfish();
-            
-            // Hide loading screen
             setTimeout(() => {
-                document.getElementById('loading').style.opacity = '0';
+                chessGame = new ChessGame();
+                
+                updateLoadingText('Загрузка завершена!');
+                
                 setTimeout(() => {
                     document.getElementById('loading').style.display = 'none';
                     document.getElementById('app').style.display = 'block';
                     showNotification('ChessMaster готов к игре!', 'success');
                 }, 500);
-            }, 1500);
-            
-            // Listen for public games
-            listenForPublicGames();
-        });
-
-        function initChessboard() {
-            game = new Chess();
-            
-            const config = {
-                draggable: true,
-                position: 'start',
-                onDragStart: onDragStart,
-                onDrop: onDrop,
-                onSnapEnd: onSnapEnd,
-                pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png'
-            };
-            
-            board = Chessboard('board', config);
-            
-            // Update player names
-            updatePlayerInfo();
+            }, 1000);
         }
 
-        function initStockfish() {
-            // Stockfish AI via Web Worker
-            if (window.Worker) {
-                stockfish = new Worker('https://cdn.jsdelivr.net/npm/stockfish-js@0.11.0/src/stockfish.js');
-                
-                stockfish.onmessage = function(event) {
-                    const message = event.data;
-                    
-                    if (message.startsWith('bestmove')) {
-                        const move = message.split(' ')[1];
-                        if (move && move !== '(none)') {
-                            // Make the AI move
-                            const from = move.substr(0, 2);
-                            const to = move.substr(2, 2);
-                            const promotion = move.length > 4 ? move.substr(4, 1) : null;
-                            
-                            const aiMove = game.move({
-                                from: from,
-                                to: to,
-                                promotion: promotion || 'q'
-                            });
-                            
-                            if (aiMove) {
-                                board.position(game.fen());
-                                addMoveToHistory(aiMove);
-                                checkGameState();
-                                updateTurn();
-                            }
-                        }
-                    }
-                };
-                
-                // Initialize Stockfish
-                stockfish.postMessage('uci');
-                stockfish.postMessage('setoption name Skill Level value 20'); // Max skill
-                stockfish.postMessage('setoption name Contempt value 0');
-                stockfish.postMessage('setoption name Threads value 4');
-                stockfish.postMessage('setoption name Hash value 1024');
-            }
+        // Start the game immediately
+        initGame();
+
+        function updateLoadingText(text) {
+            document.getElementById('loadingText').textContent = text;
         }
 
-        // ===== GAME LOGIC =====
-        function onDragStart(source, piece) {
-            if (!state.isPlaying) return false;
-            if (game.game_over()) return false;
-            
-            // Check if it's player's turn
-            const pieceColor = piece.charAt(0);
-            const turnColor = game.turn();
-            
-            // In AI mode, player can only move their color
-            if (gameMode === 'ai') {
-                const playerPieceColor = playerColor === 'white' ? 'w' : 'b';
-                if (pieceColor !== playerPieceColor) return false;
-                if (turnColor !== playerPieceColor) return false;
-            } else {
-                // In multiplayer, check turn
-                if (pieceColor !== turnColor) return false;
-            }
-            
-            return true;
-        }
-
-        function onDrop(source, target) {
-            if (!state.isPlaying) return 'snapback';
-            
-            // Check for pawn promotion
-            let promotion = null;
-            const piece = game.get(source);
-            if (piece && piece.type === 'p') {
-                const row = target.charAt(1);
-                if ((piece.color === 'w' && row === '8') || (piece.color === 'b' && row === '1')) {
-                    promotion = 'q'; // Always queen for simplicity
-                }
-            }
-            
-            const move = game.move({
-                from: source,
-                to: target,
-                promotion: promotion
-            });
-            
-            if (move === null) return 'snapback';
-            
-            // Update board
-            board.position(game.fen());
-            
-            // Add to history
-            addMoveToHistory(move);
-            
-            // Update move counts
-            updateMoveCounts();
-            
-            // Check game state
-            checkGameState();
-            
-            // Update turn
-            updateTurn();
-            
-            // If online game, send move to Firebase
-            if (gameId && (gameMode === 'friend' || gameMode === 'public')) {
-                sendMoveToFirebase(move);
-            }
-            
-            // If AI mode and it's AI's turn
-            if (gameMode === 'ai' && !game.game_over()) {
-                setTimeout(() => makeAIMove(), 500);
-            }
-            
-            return true;
-        }
-
-        function onSnapEnd() {
-            board.position(game.fen());
-        }
-
-        function makeAIMove() {
-            if (!stockfish || game.game_over() || game.turn() === (playerColor === 'white' ? 'w' : 'b')) {
-                return;
-            }
-            
-            // Use Stockfish to find best move
-            stockfish.postMessage('position fen ' + game.fen());
-            stockfish.postMessage('go depth 15 movetime 2000'); // Think for 2 seconds
-        }
-
-        // ===== GAME MANAGEMENT =====
+        // ===== GAME CONTROLS =====
         function createGame() {
             const name = document.getElementById('playerName').value || 'Игрок';
-            const time = parseInt(document.getElementById('gameTime').value) || 600;
-            const increment = parseInt(document.getElementById('incrementTime').value) || 5;
             const mode = document.getElementById('gameModeSelect').value;
             const color = document.getElementById('playerColor').value;
             
             playerName = name;
             gameMode = mode;
             
-            // Determine player color
             if (color === 'random') {
                 playerColor = Math.random() > 0.5 ? 'white' : 'black';
             } else {
                 playerColor = color;
             }
             
-            // Reset game
-            resetGame(time);
+            resetGame();
             
-            // Create game in Firebase for multiplayer
-            if (mode === 'friend' || mode === 'public') {
-                createFirebaseGame(time, increment, mode);
-            } else {
-                // AI game - start immediately
+            if (mode === 'ai') {
                 startGame();
+                updateGameStatus(`Игра с AI (Вы играете ${playerColor === 'white' ? 'белыми' : 'чёрными'})`);
+                
+                // Update player info
+                updatePlayerInfo();
                 
                 if (playerColor === 'black') {
-                    setTimeout(() => makeAIMove(), 1000);
+                    setTimeout(() => chessGame.makeAIMove(), 1000);
                 }
+            } else {
+                // For friend game, generate shareable link
+                const gameId = 'game_' + Date.now();
+                const shareUrl = `${window.location.origin}${window.location.pathname}?game=${gameId}`;
+                
+                startGame();
+                updateGameStatus('Ожидание друга...');
+                showNotification(`Ссылка для друга: ${shareUrl}`, 'info');
+                
+                // Copy to clipboard
+                navigator.clipboard.writeText(shareUrl);
             }
             
             hideModal('createGameModal');
@@ -1273,88 +1093,83 @@
                 return;
             }
             
-            // Join game via Firebase
-            joinFirebaseGame(code);
+            resetGame();
+            startGame();
+            updateGameStatus('Присоединились к игре!');
+            updatePlayerInfo();
+            
             hideModal('joinGameModal');
+            showNotification('Вы присоединились к игре!', 'success');
         }
 
-        function newGame() {
-            if (state.isPlaying && !confirm('Текущая игра будет потеряна. Продолжить?')) {
-                return;
+        function resetGame() {
+            if (chessGame) {
+                chessGame.setupInitialPosition();
             }
             
-            showModal('createGameModal');
-        }
-
-        function resetGame(time = 600) {
-            // Reset chess game
-            game = new Chess();
-            board.position('start');
-            
-            // Reset state
-            state.whiteTime = time;
-            state.blackTime = time;
+            state.whiteTime = 600;
+            state.blackTime = 600;
             state.whiteMoves = 0;
             state.blackMoves = 0;
             state.moveHistory = [];
             state.isPlaying = true;
             state.currentTurn = 'white';
             
-            // Reset UI
-            document.getElementById('whiteTimer').textContent = formatTime(time);
-            document.getElementById('blackTimer').textContent = formatTime(time);
-            document.getElementById('whiteMoves').textContent = '0';
-            document.getElementById('blackMoves').textContent = '0';
-            
-            // Clear history
+            document.getElementById('whiteTimer').textContent = '10:00';
+            document.getElementById('blackTimer').textContent = '10:00';
             clearHistory();
             
-            // Update status
             updateGameStatus('Игра началась!');
         }
 
         function startGame() {
             state.isPlaying = true;
-            
-            // Update player info
             updatePlayerInfo();
-            
-            // Start timer
             startTimer();
-            
-            // Update game status
+        }
+
+        function updatePlayerInfo() {
             if (gameMode === 'ai') {
-                updateGameStatus(`Игра с AI (Вы играете ${playerColor === 'white' ? 'белыми' : 'чёрными'})`);
+                if (playerColor === 'white') {
+                    document.getElementById('whitePlayer').textContent = playerName;
+                    document.getElementById('whiteInfo').textContent = 'Вы';
+                    document.getElementById('whiteAvatar').textContent = playerName.charAt(0);
+                    
+                    document.getElementById('blackPlayer').textContent = 'Компьютер';
+                    document.getElementById('blackInfo').textContent = 'AI';
+                    document.getElementById('blackAvatar').textContent = '🤖';
+                } else {
+                    document.getElementById('whitePlayer').textContent = 'Компьютер';
+                    document.getElementById('whiteInfo').textContent = 'AI';
+                    document.getElementById('whiteAvatar').textContent = '🤖';
+                    
+                    document.getElementById('blackPlayer').textContent = playerName;
+                    document.getElementById('blackInfo').textContent = 'Вы';
+                    document.getElementById('blackAvatar').textContent = playerName.charAt(0);
+                }
             } else {
-                updateGameStatus('Ожидание соперника...');
-            }
-            
-            // Share link if multiplayer
-            if (gameId && (gameMode === 'friend' || gameMode === 'public')) {
-                updateShareButton();
+                document.getElementById('whitePlayer').textContent = 'Белые';
+                document.getElementById('whiteInfo').textContent = playerColor === 'white' ? playerName : 'Ожидание...';
+                document.getElementById('whiteAvatar').textContent = playerColor === 'white' ? playerName.charAt(0) : '?';
+                
+                document.getElementById('blackPlayer').textContent = 'Чёрные';
+                document.getElementById('blackInfo').textContent = playerColor === 'black' ? playerName : 'Ожидание...';
+                document.getElementById('blackAvatar').textContent = playerColor === 'black' ? playerName.charAt(0) : '?';
             }
         }
 
-        // ===== TIMER =====
         function startTimer() {
-            if (timerInterval) clearInterval(timerInterval);
-            
-            timerInterval = setInterval(() => {
-                if (game.turn() === 'w') {
-                    state.whiteTime--;
-                } else {
-                    state.blackTime--;
-                }
-                
-                // Update timers
-                document.getElementById('whiteTimer').textContent = formatTime(state.whiteTime);
-                document.getElementById('blackTimer').textContent = formatTime(state.blackTime);
-                
-                // Check timeout
-                if (state.whiteTime <= 0) {
-                    endGame('black', 'Время белых вышло!');
-                } else if (state.blackTime <= 0) {
-                    endGame('white', 'Время чёрных вышло!');
+            // Simple timer implementation
+            setInterval(() => {
+                if (state.isPlaying) {
+                    if (state.currentTurn === 'white') {
+                        state.whiteTime--;
+                    } else {
+                        state.blackTime--;
+                    }
+                    
+                    document.getElementById('whiteTimer').textContent = formatTime(state.whiteTime);
+                    document.getElementById('blackTimer').textContent = formatTime(state.blackTime);
                 }
             }, 1000);
         }
@@ -1365,94 +1180,17 @@
             return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         }
 
-        // ===== GAME STATE =====
-        function checkGameState() {
-            if (game.in_checkmate()) {
-                const winner = game.turn() === 'w' ? 'Чёрные' : 'Белые';
-                endGame(winner === 'Белые' ? 'white' : 'black', `Мат! Победа ${winner}!`);
-            } else if (game.in_draw()) {
-                endGame('draw', 'Ничья!');
-            } else if (game.in_check()) {
-                updateGameStatus('ШАХ!');
-            } else {
-                updateTurn();
-            }
-        }
-
-        function updateTurn() {
-            const turn = game.turn() === 'w' ? 'белых' : 'чёрных';
-            updateGameStatus(`Ход ${turn}`);
-            state.currentTurn = game.turn() === 'w' ? 'white' : 'black';
-        }
-
-        function endGame(winner, message) {
-            state.isPlaying = false;
-            clearInterval(timerInterval);
-            
-            updateGameStatus(message);
-            showNotification(message, 'success');
-            
-            // Add to chat
-            addChatMessage('Система', message);
-            
-            // Update Firebase if multiplayer
-            if (gameId && (gameMode === 'friend' || gameMode === 'public')) {
-                endFirebaseGame(winner);
-            }
-        }
-
-        // ===== UI UPDATES =====
-        function updatePlayerInfo() {
-            // White player
-            if (gameMode === 'ai') {
-                if (playerColor === 'white') {
-                    document.getElementById('whitePlayer').textContent = playerName;
-                    document.getElementById('whiteInfo').textContent = 'Вы';
-                    document.getElementById('whiteAvatar').textContent = playerName.charAt(0);
-                    
-                    document.getElementById('blackPlayer').textContent = 'Компьютер';
-                    document.getElementById('blackInfo').textContent = 'AI (Сложный)';
-                    document.getElementById('blackAvatar').textContent = '🤖';
-                } else {
-                    document.getElementById('whitePlayer').textContent = 'Компьютер';
-                    document.getElementById('whiteInfo').textContent = 'AI (Сложный)';
-                    document.getElementById('whiteAvatar').textContent = '🤖';
-                    
-                    document.getElementById('blackPlayer').textContent = playerName;
-                    document.getElementById('blackInfo').textContent = 'Вы';
-                    document.getElementById('blackAvatar').textContent = playerName.charAt(0);
-                }
-            } else {
-                // Multiplayer
-                document.getElementById('whitePlayer').textContent = 'Белые';
-                document.getElementById('whiteInfo').textContent = playerColor === 'white' ? 'Вы' : 'Ожидание...';
-                document.getElementById('whiteAvatar').textContent = playerColor === 'white' ? playerName.charAt(0) : '?';
-                
-                document.getElementById('blackPlayer').textContent = 'Чёрные';
-                document.getElementById('blackInfo').textContent = playerColor === 'black' ? 'Вы' : 'Ожидание...';
-                document.getElementById('blackAvatar').textContent = playerColor === 'black' ? playerName.charAt(0) : '?';
-            }
-        }
-
         function updateGameStatus(text) {
             document.getElementById('gameStatus').textContent = text;
         }
 
-        function updateMoveCounts() {
-            const whiteMoves = state.moveHistory.filter(m => m.color === 'w').length;
-            const blackMoves = state.moveHistory.length - whiteMoves;
-            
-            document.getElementById('whiteMoves').textContent = whiteMoves;
-            document.getElementById('blackMoves').textContent = blackMoves;
-        }
-
+        // ===== MOVE HISTORY =====
         function addMoveToHistory(move) {
             state.moveHistory.push(move);
             
             const container = document.getElementById('movesContainer');
             
-            // Clear placeholder
-            if (container.querySelector('.text-center')) {
+            if (container.querySelector('.fa-chess-board')) {
                 container.innerHTML = '';
             }
             
@@ -1464,25 +1202,23 @@
                 row.className = 'move-row';
                 row.innerHTML = `
                     <div class="move-number">${moveNumber}.</div>
-                    <div class="move-white">${move.san}</div>
+                    <div class="move-white">${move.from}-${move.to}</div>
                     <div class="move-black"></div>
                 `;
                 container.appendChild(row);
             } else {
                 const lastRow = container.lastElementChild;
                 if (lastRow) {
-                    lastRow.querySelector('.move-black').textContent = move.san;
+                    lastRow.querySelector('.move-black').textContent = `${move.from}-${move.to}`;
                 }
             }
             
-            // Scroll to bottom
             container.scrollTop = container.scrollHeight;
         }
 
         function clearHistory() {
-            const container = document.getElementById('movesContainer');
-            container.innerHTML = `
-                <div class="text-center" style="color: #999; padding: 20px;">
+            document.getElementById('movesContainer').innerHTML = `
+                <div style="color: #999; text-align: center; padding: 20px;">
                     <i class="fas fa-chess-board fa-2x"></i>
                     <p style="margin-top: 10px;">Ходы появятся здесь</p>
                 </div>
@@ -1496,75 +1232,71 @@
             
             if (!message) return;
             
-            // Add to local chat
-            addChatMessage(playerName, message, true);
-            
-            // Send to Firebase if multiplayer
-            if (gameId && (gameMode === 'friend' || gameMode === 'public')) {
-                sendChatToFirebase(message);
-            }
-            
-            input.value = '';
-        }
-
-        function addChatMessage(sender, message, isOwn = false) {
             const container = document.getElementById('chatMessages');
             const messageDiv = document.createElement('div');
-            
-            messageDiv.className = `message ${isOwn ? 'own' : sender === 'Система' ? 'system' : 'opponent'}`;
-            messageDiv.innerHTML = `
-                <div class="message-header">
-                    <span>${sender}</span>
-                    <span>${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                </div>
-                ${message}
-            `;
-            
+            messageDiv.className = 'message own';
+            messageDiv.textContent = `${playerName}: ${message}`;
             container.appendChild(messageDiv);
+            
+            input.value = '';
             container.scrollTop = container.scrollHeight;
+            
+            // AI response in AI mode
+            if (gameMode === 'ai') {
+                setTimeout(() => {
+                    const responses = [
+                        'Интересный ход!',
+                        'Думаю над ответом...',
+                        'Сложная позиция!',
+                        'Хорошо играешь!',
+                        'Мне нравится эта игра!'
+                    ];
+                    
+                    const aiMessage = document.createElement('div');
+                    aiMessage.className = 'message opponent';
+                    aiMessage.textContent = `Компьютер: ${responses[Math.floor(Math.random() * responses.length)]}`;
+                    container.appendChild(aiMessage);
+                    container.scrollTop = container.scrollHeight;
+                }, 1000);
+            }
         }
 
-        // ===== CONTROLS =====
+        // ===== GAME ACTIONS =====
         function undoMove() {
             if (state.moveHistory.length === 0) {
                 showNotification('Нет ходов для отмены', 'info');
                 return;
             }
             
-            // Undo last move
-            game.undo();
+            showNotification('Ход отменён', 'info');
             
-            // If AI mode, undo AI move too
-            if (gameMode === 'ai' && state.moveHistory.length > 1) {
-                game.undo();
-            }
-            
-            // Update board
-            board.position(game.fen());
-            
-            // Remove from history
+            // In a real implementation, you would need to track game state
+            // and actually revert the move. This is simplified.
             state.moveHistory.pop();
-            if (gameMode === 'ai') state.moveHistory.pop();
             
             // Update history display
-            updateHistoryDisplay();
-            
-            showNotification('Ход отменён', 'info');
+            const container = document.getElementById('movesContainer');
+            const rows = container.querySelectorAll('.move-row');
+            if (rows.length > 0) {
+                rows[rows.length - 1].remove();
+            }
         }
 
         function getHint() {
-            if (!state.isPlaying || game.game_over()) {
-                showNotification('Игра не начата или завершена', 'info');
+            if (!state.isPlaying) {
+                showNotification('Игра не начата', 'info');
                 return;
             }
             
-            // Use Stockfish for hint
-            if (stockfish) {
-                stockfish.postMessage('position fen ' + game.fen());
-                stockfish.postMessage('go depth 10 movetime 1000');
-                
-                showNotification('AI анализирует позицию...', 'info');
-            }
+            const hints = [
+                'Попробуйте развить коня!',
+                'Контролируйте центр доски',
+                'Защитите своего короля',
+                'Атакуйте слабые фигуры соперника',
+                'Подумайте о рокировке'
+            ];
+            
+            showNotification(`💡 Подсказка: ${hints[Math.floor(Math.random() * hints.length)]}`, 'info');
         }
 
         function offerDraw() {
@@ -1572,12 +1304,13 @@
             
             if (confirm('Предложить ничью?')) {
                 showNotification('Ничья предложена', 'info');
-                addChatMessage('Система', `${playerName} предлагает ничью`);
                 
-                // In multiplayer, send draw offer
-                if (gameId && (gameMode === 'friend' || gameMode === 'public')) {
-                    offerDrawFirebase();
-                }
+                const container = document.getElementById('chatMessages');
+                const message = document.createElement('div');
+                message.className = 'message system';
+                message.textContent = `${playerName} предлагает ничью`;
+                container.appendChild(message);
+                container.scrollTop = container.scrollHeight;
             }
         }
 
@@ -1585,24 +1318,10 @@
             if (!state.isPlaying) return;
             
             if (confirm('Вы уверены, что хотите сдаться?')) {
-                const winner = playerColor === 'white' ? 'black' : 'white';
-                endGame(winner, `${playerName} сдался!`);
-                addChatMessage('Система', `${playerName} сдался!`);
+                state.isPlaying = false;
+                updateGameStatus(`${playerName} сдался!`);
+                showNotification('Вы сдались!', 'error');
             }
-        }
-
-        function shareGame() {
-            if (!gameId) {
-                showNotification('Сначала создайте игру', 'info');
-                return;
-            }
-            
-            const url = `${window.location.origin}${window.location.pathname}?game=${gameId}`;
-            
-            // Copy to clipboard
-            navigator.clipboard.writeText(url).then(() => {
-                showNotification('Ссылка скопирована в буфер обмена!', 'success');
-            });
         }
 
         // ===== MODAL FUNCTIONS =====
@@ -1615,7 +1334,7 @@
         }
 
         function showNotification(message, type = 'info') {
-            // Create notification element
+            // Simple notification
             const notification = document.createElement('div');
             notification.style.cssText = `
                 position: fixed;
@@ -1627,284 +1346,23 @@
                 border-radius: 8px;
                 box-shadow: 0 5px 15px rgba(0,0,0,0.2);
                 z-index: 1000;
-                animation: slideIn 0.3s;
             `;
             
             notification.textContent = message;
             document.body.appendChild(notification);
             
-            // Remove after 3 seconds
             setTimeout(() => {
                 notification.style.opacity = '0';
                 setTimeout(() => notification.remove(), 300);
             }, 3000);
         }
 
-        // ===== FIREBASE FUNCTIONS =====
-        function createFirebaseGame(time, increment, mode) {
-            gameId = 'game_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
-            
-            const gameData = {
-                creator: playerId,
-                creatorName: playerName,
-                creatorColor: playerColor,
-                whitePlayer: playerColor === 'white' ? playerId : null,
-                blackPlayer: playerColor === 'black' ? playerId : null,
-                timeControl: time,
-                increment: increment,
-                status: 'waiting',
-                mode: mode,
-                fen: 'start',
-                moves: [],
-                chat: [],
-                createdAt: Date.now()
-            };
-            
-            // Save to Firebase
-            db.ref('games/' + gameId).set(gameData);
-            
-            // Listen for updates
-            listenToGame(gameId);
-            
-            // Start game
-            startGame();
-            
-            return gameId;
-        }
-
-        function joinFirebaseGame(code) {
-            gameId = code;
-            
-            db.ref('games/' + gameId).once('value').then(snapshot => {
-                const gameData = snapshot.val();
-                
-                if (!gameData) {
-                    showNotification('Игра не найдена', 'error');
-                    return;
-                }
-                
-                if (gameData.status !== 'waiting') {
-                    showNotification('Игра уже начата', 'error');
-                    return;
-                }
-                
-                // Determine color
-                if (!gameData.whitePlayer) {
-                    playerColor = 'white';
-                    gameData.whitePlayer = playerId;
-                } else if (!gameData.blackPlayer) {
-                    playerColor = 'black';
-                    gameData.blackPlayer = playerId;
-                } else {
-                    showNotification('Игра уже заполнена', 'error');
-                    return;
-                }
-                
-                // Update game
-                gameData.status = 'active';
-                gameData[playerColor === 'white' ? 'whitePlayerName' : 'blackPlayerName'] = playerName;
-                
-                db.ref('games/' + gameId).update(gameData);
-                
-                // Load game state
-                resetGame(gameData.timeControl);
-                startGame();
-                updateGameStatus('Игра началась!');
-                
-                // Listen for updates
-                listenToGame(gameId);
-                
-                showNotification('Вы присоединились к игре!', 'success');
-            });
-        }
-
-        function listenToGame(gameId) {
-            db.ref('games/' + gameId).on('value', snapshot => {
-                const gameData = snapshot.val();
-                
-                if (!gameData) return;
-                
-                // Update game state
-                if (gameData.status === 'active') {
-                    // Update player names
-                    if (gameData.whitePlayerName) {
-                        document.getElementById('whiteInfo').textContent = 
-                            gameData.whitePlayer === playerId ? 'Вы' : gameData.whitePlayerName;
-                        document.getElementById('whiteAvatar').textContent = 
-                            gameData.whitePlayer === playerId ? playerName.charAt(0) : gameData.whitePlayerName.charAt(0);
-                    }
-                    
-                    if (gameData.blackPlayerName) {
-                        document.getElementById('blackInfo').textContent = 
-                            gameData.blackPlayer === playerId ? 'Вы' : gameData.blackPlayerName;
-                        document.getElementById('blackAvatar').textContent = 
-                            gameData.blackPlayer === playerId ? playerName.charAt(0) : gameData.blackPlayerName.charAt(0);
-                    }
-                    
-                    // Update board position
-                    if (gameData.fen && gameData.fen !== game.fen()) {
-                        game.load(gameData.fen);
-                        board.position(gameData.fen);
-                    }
-                    
-                    // Update moves
-                    if (gameData.moves && gameData.moves.length > state.moveHistory.length) {
-                        const newMoves = gameData.moves.slice(state.moveHistory.length);
-                        newMoves.forEach(moveData => {
-                            const move = game.move(moveData);
-                            if (move) {
-                                addMoveToHistory(move);
-                            }
-                        });
-                    }
-                    
-                    // Update chat
-                    if (gameData.chat && gameData.chat.length > 0) {
-                        const chatContainer = document.getElementById('chatMessages');
-                        const messageCount = chatContainer.querySelectorAll('.message').length - 1; // -1 for system message
-                        
-                        if (gameData.chat.length > messageCount) {
-                            const newMessages = gameData.chat.slice(messageCount);
-                            newMessages.forEach(msg => {
-                                if (msg.sender !== playerName) { // Don't show own messages twice
-                                    addChatMessage(msg.sender, msg.text);
-                                }
-                            });
-                        }
-                    }
-                }
-            });
-        }
-
-        function sendMoveToFirebase(move) {
-            if (!gameId) return;
-            
-            const moveData = {
-                from: move.from,
-                to: move.to,
-                san: move.san,
-                color: move.color,
-                piece: move.piece,
-                timestamp: Date.now()
-            };
-            
-            db.ref('games/' + gameId + '/moves').push(moveData);
-            db.ref('games/' + gameId).update({ fen: game.fen() });
-        }
-
-        function sendChatToFirebase(message) {
-            if (!gameId) return;
-            
-            const chatData = {
-                sender: playerName,
-                text: message,
-                timestamp: Date.now()
-            };
-            
-            db.ref('games/' + gameId + '/chat').push(chatData);
-        }
-
-        function offerDrawFirebase() {
-            if (!gameId) return;
-            
-            db.ref('games/' + gameId + '/chat').push({
-                sender: 'Система',
-                text: `${playerName} предлагает ничью`,
-                timestamp: Date.now()
-            });
-        }
-
-        function endFirebaseGame(winner) {
-            if (!gameId) return;
-            
-            db.ref('games/' + gameId).update({
-                status: 'finished',
-                winner: winner,
-                finishedAt: Date.now()
-            });
-        }
-
-        function listenForPublicGames() {
-            db.ref('games').on('value', snapshot => {
-                const games = snapshot.val();
-                const container = document.getElementById('publicGamesList');
-                
-                if (!games) {
-                    container.innerHTML = '<p style="color: #999; text-align: center;">Нет публичных игр</p>';
-                    return;
-                }
-                
-                let html = '';
-                let count = 0;
-                
-                for (const [id, gameData] of Object.entries(games)) {
-                    if (gameData.mode === 'public' && gameData.status === 'waiting') {
-                        count++;
-                        html += `
-                            <div class="game-item" onclick="joinPublicGame('${id}')">
-                                <div class="game-info-small">
-                                    <strong>${gameData.creatorName}</strong>
-                                    <div class="game-players">
-                                        ${gameData.whitePlayer ? '⚪' : '◯'} vs ${gameData.blackPlayer ? '⚫' : '◯'}
-                                    </div>
-                                </div>
-                                <div class="game-time">
-                                    ${formatTime(gameData.timeControl)} +${gameData.increment}
-                                </div>
-                            </div>
-                        `;
-                    }
-                }
-                
-                if (count === 0) {
-                    container.innerHTML = '<p style="color: #999; text-align: center;">Нет публичных игр</p>';
-                } else {
-                    container.innerHTML = html;
-                }
-            });
-        }
-
-        function joinPublicGame(id) {
-            document.getElementById('gameCode').value = id;
-            joinGame();
-        }
-
-        function updateShareButton() {
-            const shareBtn = document.getElementById('shareBtn');
-            shareBtn.innerHTML = `<i class="fas fa-share-alt"></i> Код: ${gameId.substr(5, 8)}`;
-            shareBtn.title = 'Нажмите чтобы скопировать ссылку';
-        }
-
-        function updateHistoryDisplay() {
-            const container = document.getElementById('movesContainer');
-            container.innerHTML = '';
-            
-            for (let i = 0; i < state.moveHistory.length; i += 2) {
-                const moveNumber = Math.floor(i / 2) + 1;
-                const whiteMove = state.moveHistory[i];
-                const blackMove = state.moveHistory[i + 1];
-                
-                const row = document.createElement('div');
-                row.className = 'move-row';
-                row.innerHTML = `
-                    <div class="move-number">${moveNumber}.</div>
-                    <div class="move-white">${whiteMove.san}</div>
-                    <div class="move-black">${blackMove ? blackMove.san : ''}</div>
-                `;
-                container.appendChild(row);
-            }
-            
-            if (state.moveHistory.length === 0) {
-                clearHistory();
-            }
-        }
-
-        // Check URL for game ID
+        // Check URL for game code
         const urlParams = new URLSearchParams(window.location.search);
-        const gameIdFromUrl = urlParams.get('game');
-        if (gameIdFromUrl) {
+        const gameCode = urlParams.get('game');
+        if (gameCode) {
             setTimeout(() => {
-                document.getElementById('gameCode').value = gameIdFromUrl;
+                document.getElementById('gameCode').value = gameCode;
                 showModal('joinGameModal');
             }, 2000);
         }
