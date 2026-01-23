@@ -5,29 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>♛ Chess Arena — Битва умов</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>♛</text></svg>">
-    <!-- Шрифты -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Иконки -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Шахматные фигуры (лучшие спрайты) -->
-    <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboard2@1.0.1/dist/chessboard2.min.css">
-    <!-- Наш основной стиль -->
+    <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/css/chessboard-1.0.0.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Particle Background -->
     <div id="particles-js"></div>
     
-    <!-- Loading Screen -->
     <div id="loadingScreen" class="loading-screen">
         <div class="loading-content">
             <div class="chess-loader">
-                <div class="chess-piece king"></div>
-                <div class="chess-piece queen"></div>
-                <div class="chess-piece bishop"></div>
-                <div class="chess-piece knight"></div>
-                <div class="chess-piece rook"></div>
-                <div class="chess-piece pawn"></div>
+                <div class="chess-piece king">♔</div>
+                <div class="chess-piece queen">♕</div>
+                <div class="chess-piece bishop">♗</div>
+                <div class="chess-piece knight">♘</div>
+                <div class="chess-piece rook">♖</div>
+                <div class="chess-piece pawn">♙</div>
             </div>
             <h1 class="loading-title">♚ Chess Arena ♔</h1>
             <p class="loading-subtitle">Загрузка битвы...</p>
@@ -37,9 +31,7 @@
         </div>
     </div>
 
-    <!-- Main Container -->
     <div class="container" id="mainContainer" style="display: none;">
-        <!-- Header -->
         <header class="header">
             <div class="logo">
                 <div class="logo-icon">♛</div>
@@ -56,7 +48,7 @@
                 <button class="btn-icon" id="soundToggle" title="Звук">
                     <i class="fas fa-volume-up"></i>
                 </button>
-                <div class="user-profile" id="userProfile">
+                <div class="user-profile">
                     <div class="avatar" id="userAvatar">?</div>
                     <div class="user-info">
                         <span class="username" id="username">Гость</span>
@@ -66,58 +58,53 @@
             </div>
         </header>
 
-        <!-- Main Game Area -->
         <div class="game-layout">
-            <!-- Left Panel: Board & Controls -->
             <div class="board-section">
                 <div class="board-header">
-                    <div class="game-status" id="gameStatus">
+                    <div class="game-status">
                         <span class="status-indicator"></span>
                         <span class="status-text">Выберите режим игры</span>
                     </div>
                     <div class="game-timer">
-                        <div class="timer white-timer" id="whiteTimer">
+                        <div class="timer white-timer">
                             <i class="fas fa-chess-piece white"></i>
-                            <span>10:00</span>
+                            <span id="whiteTimer">10:00</span>
                         </div>
                         <div class="timer-separator">vs</div>
-                        <div class="timer black-timer" id="blackTimer">
-                            <span>10:00</span>
+                        <div class="timer black-timer">
+                            <span id="blackTimer">10:00</span>
                             <i class="fas fa-chess-piece black"></i>
                         </div>
                     </div>
                 </div>
 
-                <!-- Chess Board -->
                 <div class="board-container">
                     <div id="board" class="chess-board"></div>
                     
-                    <!-- Board Overlay -->
                     <div class="board-overlay" id="boardOverlay">
                         <div class="overlay-content">
-                            <h3>Выберите режим игры</h3>
+                            <h3>🎮 Выберите режим игры</h3>
                             <div class="mode-buttons">
-                                <button class="mode-btn ai-mode" data-mode="ai">
+                                <button class="mode-btn ai-mode" id="playAI">
                                     <i class="fas fa-robot"></i>
                                     <span>Играть с AI</span>
                                     <small>Уровень: Сложный</small>
                                 </button>
-                                <button class="mode-btn online-mode" data-mode="online">
-                                    <i class="fas fa-globe"></i>
-                                    <span>Играть онлайн</span>
-                                    <small>С реальными игроками</small>
-                                </button>
-                                <button class="mode-btn local-mode" data-mode="local">
+                                <button class="mode-btn local-mode" id="playLocal">
                                     <i class="fas fa-users"></i>
                                     <span>Локальная игра</span>
                                     <small>Два игрока</small>
+                                </button>
+                                <button class="mode-btn online-mode" id="playOnline">
+                                    <i class="fas fa-globe"></i>
+                                    <span>Играть онлайн</span>
+                                    <small>С реальными игроками</small>
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Game Controls -->
                 <div class="controls">
                     <div class="control-group">
                         <button class="btn-control btn-new-game" id="newGameBtn">
@@ -150,9 +137,7 @@
                 </div>
             </div>
 
-            <!-- Right Panel: Game Info & Chat -->
             <div class="info-section">
-                <!-- Player Info -->
                 <div class="player-cards">
                     <div class="player-card white-player">
                         <div class="player-header">
@@ -162,7 +147,7 @@
                         </div>
                         <div class="player-body" id="whitePlayerInfo">
                             <div class="player-avatar">♔</div>
-                            <div class="player-name">Вы</div>
+                            <div class="player-name" id="whitePlayerName">Вы</div>
                             <div class="player-stats">
                                 <div class="stat">
                                     <span>Ходы:</span>
@@ -180,11 +165,11 @@
                         <div class="player-header">
                             <div class="player-color black"></div>
                             <h3>ЧЁРНЫЕ</h3>
-                            <div class="player-rating" id="blackRating">1500</div>
+                            <div class="player-rating">1500</div>
                         </div>
                         <div class="player-body" id="blackPlayerInfo">
                             <div class="player-avatar">♚</div>
-                            <div class="player-name">AI Бот</div>
+                            <div class="player-name" id="blackPlayerName">AI Бот</div>
                             <div class="player-stats">
                                 <div class="stat">
                                     <span>Ходы:</span>
@@ -199,7 +184,6 @@
                     </div>
                 </div>
 
-                <!-- Move History -->
                 <div class="move-history">
                     <div class="section-header">
                         <h3><i class="fas fa-history"></i> История ходов</h3>
@@ -215,15 +199,9 @@
                     </div>
                 </div>
 
-                <!-- Game Chat -->
                 <div class="game-chat">
                     <div class="section-header">
                         <h3><i class="fas fa-comments"></i> Чат игры</h3>
-                        <div class="chat-controls">
-                            <button class="btn-sm" id="emoteBtn">
-                                <i class="fas fa-smile"></i>
-                            </button>
-                        </div>
                     </div>
                     <div class="chat-messages" id="chatMessages">
                         <div class="system-message">
@@ -240,119 +218,14 @@
                 </div>
             </div>
         </div>
-
-        <!-- Bottom Panel: Lobby & Stats -->
-        <div class="lobby-section">
-            <div class="lobby-tabs">
-                <button class="tab-btn active" data-tab="games">
-                    <i class="fas fa-gamepad"></i> Активные игры
-                </button>
-                <button class="tab-btn" data-tab="players">
-                    <i class="fas fa-users"></i> Онлайн игроки
-                </button>
-                <button class="tab-btn" data-tab="stats">
-                    <i class="fas fa-chart-line"></i> Статистика
-                </button>
-                <button class="tab-btn" data-tab="friends">
-                    <i class="fas fa-user-friends"></i> Друзья
-                </button>
-            </div>
-
-            <div class="tab-content active" id="gamesTab">
-                <div class="game-list" id="activeGames">
-                    <!-- Games will be loaded here -->
-                </div>
-            </div>
-
-            <div class="tab-content" id="playersTab">
-                <div class="players-list" id="onlinePlayers">
-                    <!-- Players will be loaded here -->
-                </div>
-            </div>
-
-            <div class="tab-content" id="statsTab">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon win">
-                            <i class="fas fa-trophy"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h4>Побед</h4>
-                            <p class="stat-value" id="winsCount">0</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon loss">
-                            <i class="fas fa-skull-crossbones"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h4>Поражений</h4>
-                            <p class="stat-value" id="lossesCount">0</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon draw">
-                            <i class="fas fa-handshake"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h4>Ничьих</h4>
-                            <p class="stat-value" id="drawsCount">0</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon time">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h4>Всего игр</h4>
-                            <p class="stat-value" id="totalGames">0</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Modals -->
-        <div class="modal" id="loginModal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2>Вход в Chess Arena</h2>
-                    <button class="close-modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <div class="auth-tabs">
-                        <button class="auth-tab active" data-auth="login">Вход</button>
-                        <button class="auth-tab" data-auth="register">Регистрация</button>
-                    </div>
-                    <form id="loginForm" class="auth-form">
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" required placeholder="ваш@email.com">
-                        </div>
-                        <div class="form-group">
-                            <label for="password">Пароль</label>
-                            <input type="password" id="password" required placeholder="Минимум 6 символов">
-                        </div>
-                        <button type="submit" class="btn-auth">Войти</button>
-                    </form>
-                    <div class="auth-divider">
-                        <span>или продолжить как</span>
-                    </div>
-                    <button class="btn-guest" id="playAsGuest">Гость</button>
-                </div>
-            </div>
-        </div>
     </div>
 
-    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script src="https://unpkg.com/@chrisoakman/chessboard2@1.0.1/dist/chessboard2.min.js"></script>
+    <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/js/chessboard-1.0.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.13.4/chess.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <script src="firebase.js"></script>
-    <script src="chess-engine.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
