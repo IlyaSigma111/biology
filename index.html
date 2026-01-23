@@ -1,140 +1,448 @@
 <!DOCTYPE html>
-<html lang="ru" data-theme="dark">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>♛ Chess Arena — Битва умов</title>
+    <title>♟️ ChessMaster — Игра в шахматы с друзьями</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Стили прямо здесь чтобы сразу работало */
+        /* ===== RESET ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --white-square: #f0d9b5;
+            --black-square: #b58863;
+            --shadow: 0 10px 30px rgba(0,0,0,0.2);
+            --radius: 12px;
+        }
+
+        /* ===== GLOBAL ===== */
         body {
-            font-family: 'Arial', sans-serif;
-            background: #0f0f23;
-            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
+            color: #333;
+            overflow-x: hidden;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
+            padding: 20px;
         }
 
-        .header {
-            text-align: center;
-            padding: 20px 0;
+        /* ===== LOADING ===== */
+        #loading {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: var(--dark);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s;
+        }
+
+        .chess-loader {
+            display: flex;
+            gap: 15px;
             margin-bottom: 30px;
         }
 
+        .piece {
+            font-size: 40px;
+            animation: float 2s infinite ease-in-out;
+        }
+
+        .piece:nth-child(2) { animation-delay: 0.2s; }
+        .piece:nth-child(3) { animation-delay: 0.4s; }
+        .piece:nth-child(4) { animation-delay: 0.6s; }
+        .piece:nth-child(5) { animation-delay: 0.8s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: var(--radius);
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+
         .logo {
-            font-size: 4rem;
-            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            font-size: 40px;
+            color: var(--secondary);
         }
 
         .logo-text h1 {
-            font-size: 2.5rem;
-            margin-bottom: 5px;
-            color: #4d7fff;
+            font-size: 24px;
+            color: var(--dark);
         }
 
         .logo-text p {
-            color: #b0b0d0;
-            font-size: 1rem;
+            color: #666;
+            font-size: 14px;
         }
 
-        .game-area {
+        .header-buttons {
             display: flex;
-            gap: 30px;
-            flex-wrap: wrap;
+            gap: 15px;
         }
 
-        .board-container {
-            flex: 1;
-            min-width: 600px;
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: var(--secondary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .board-wrapper {
-            background: #1a1a2e;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--secondary);
+            color: var(--secondary);
+        }
+
+        /* ===== MAIN LAYOUT ===== */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 25px;
+            min-height: calc(100vh - 200px);
+        }
+
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== BOARD SECTION ===== */
+        .board-section {
+            background: rgba(255,255,255,0.95);
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+        }
+
+        .board-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .game-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .game-status {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .game-mode {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .timers {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .timer {
+            font-family: 'Courier New', monospace;
+            font-size: 24px;
+            font-weight: bold;
+            padding: 10px 20px;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        .timer.white {
+            border: 3px solid var(--secondary);
+        }
+
+        .timer.black {
+            border: 3px solid var(--dark);
+        }
+
+        /* Chess Board */
+        #board-container {
+            position: relative;
+            width: 100%;
+            max-width: 640px;
+            margin: 0 auto;
         }
 
         #board {
-            width: 560px;
-            height: 560px;
-            margin: 0 auto;
-            border: 2px solid #4d7fff;
-            border-radius: 5px;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1/1;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
         }
 
+        /* Player Cards */
+        .players {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            gap: 20px;
+        }
+
+        .player-card {
+            flex: 1;
+            padding: 20px;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .player-card.white {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 2px solid var(--secondary);
+        }
+
+        .player-card.black {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            border: 2px solid var(--dark);
+        }
+
+        .player-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .white .player-avatar {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .black .player-avatar {
+            background: var(--dark);
+            color: white;
+        }
+
+        .player-info h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .player-info p {
+            opacity: 0.8;
+            font-size: 14px;
+        }
+
+        /* Controls */
         .controls {
             display: flex;
             justify-content: center;
             gap: 15px;
-            margin-top: 20px;
+            margin-top: 25px;
+            flex-wrap: wrap;
         }
 
-        button {
-            padding: 12px 24px;
-            background: #4d7fff;
-            color: white;
+        .control-btn {
+            padding: 12px 25px;
             border: none;
             border-radius: 8px;
+            background: #f8f9fa;
+            color: var(--dark);
+            font-weight: 600;
             cursor: pointer;
-            font-size: 1rem;
-            font-weight: bold;
             transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 150px;
+            justify-content: center;
         }
 
-        button:hover {
-            background: #3567d8;
+        .control-btn:hover {
             transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
+        .control-btn.new-game { background: var(--secondary); color: white; }
+        .control-btn.undo { background: var(--warning); color: white; }
+        .control-btn.hint { background: var(--success); color: white; }
+        .control-btn.draw { background: var(--warning); color: white; }
+        .control-btn.resign { background: var(--accent); color: white; }
+
+        /* ===== SIDEBAR ===== */
         .sidebar {
-            width: 300px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 25px;
         }
 
+        /* Panel Styling */
         .panel {
-            background: #1a1a2e;
-            border-radius: 15px;
+            background: rgba(255,255,255,0.95);
+            border-radius: var(--radius);
             padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: var(--shadow);
         }
 
-        .panel h3 {
-            color: #4d7fff;
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 15px;
             padding-bottom: 10px;
-            border-bottom: 2px solid #4d7fff;
+            border-bottom: 2px solid #eee;
         }
 
-        .move-history {
-            height: 200px;
+        .panel-header h3 {
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Move History */
+        .moves-container {
+            height: 250px;
             overflow-y: auto;
-            margin-top: 10px;
+            padding-right: 10px;
         }
 
         .move-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px;
-            border-bottom: 1px solid #2a2a3e;
+            display: grid;
+            grid-template-columns: 40px 1fr 1fr;
+            gap: 10px;
+            padding: 8px 12px;
+            margin-bottom: 5px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            transition: all 0.3s;
         }
 
+        .move-row:hover {
+            background: #e9ecef;
+        }
+
+        .move-number {
+            color: #666;
+            font-weight: 600;
+        }
+
+        .move-white, .move-black {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .move-white {
+            background: rgba(52, 152, 219, 0.1);
+            color: var(--secondary);
+        }
+
+        .move-black {
+            background: rgba(44, 62, 80, 0.1);
+            color: var(--dark);
+        }
+
+        /* Chat */
         .chat-messages {
-            height: 150px;
+            height: 300px;
             overflow-y: auto;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .message {
             margin-bottom: 10px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            max-width: 80%;
+            animation: slideIn 0.3s;
+        }
+
+        .message.system {
+            background: rgba(52, 152, 219, 0.1);
+            margin: 0 auto;
+            text-align: center;
+            max-width: 100%;
+        }
+
+        .message.own {
+            background: var(--secondary);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 2px;
+        }
+
+        .message.opponent {
+            background: #e9ecef;
+            margin-right: auto;
+            border-bottom-left-radius: 2px;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 12px;
+            opacity: 0.8;
         }
 
         .chat-input {
@@ -144,518 +452,911 @@
 
         .chat-input input {
             flex: 1;
-            padding: 10px;
-            background: #2a2a3e;
-            border: none;
-            border-radius: 5px;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .chat-input input:focus {
+            outline: none;
+            border-color: var(--secondary);
+        }
+
+        .chat-input button {
+            padding: 12px 20px;
+            background: var(--secondary);
             color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
-        /* Шахматная доска стили */
-        .board-b72b1 {
-            border: 2px solid #404040;
+        .chat-input button:hover {
+            background: #2980b9;
         }
 
-        .square-55d63 {
-            position: relative;
-        }
-
-        .white-1e1d7 {
-            background-color: #f0d9b5;
-        }
-
-        .black-3c85d {
-            background-color: #b58863;
-        }
-
-        .highlight {
-            background-color: rgba(77, 127, 255, 0.5) !important;
-        }
-
-        .loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #0f0f23;
+        /* Lobby */
+        .lobby-options {
             display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .lobby-btn {
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background: #f8f9fa;
+            color: var(--dark);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .lobby-btn:hover {
+            background: var(--secondary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .lobby-btn i {
+            font-size: 20px;
+        }
+
+        /* Game List */
+        .game-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .game-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .game-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .game-info-small {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .game-players {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .game-time {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #999;
+        }
+
+        /* ===== MODALS ===== */
+        .modal {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
             justify-content: center;
             align-items: center;
             z-index: 1000;
-            flex-direction: column;
-            gap: 20px;
+            backdrop-filter: blur(5px);
         }
 
-        .loading.hidden {
-            display: none;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #4d7fff;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .status {
-            text-align: center;
-            margin: 20px 0;
-            font-size: 1.2rem;
-            color: #4d7fff;
-        }
-
-        .timer {
-            font-family: monospace;
-            font-size: 1.5rem;
-            color: #ff9f1c;
-            text-align: center;
-            margin: 10px 0;
-        }
-
-        .player-info {
+        .modal.active {
             display: flex;
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--radius);
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 10px;
-            margin: 10px 0;
-            padding: 10px;
-            background: #2a2a3e;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .modal-header h2 {
+            color: var(--dark);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover {
+            color: var(--accent);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
             border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
         }
 
-        .player-color {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
+        .form-control:focus {
+            outline: none;
+            border-color: var(--secondary);
         }
 
-        .white-color { background: white; }
-        .black-color { background: black; }
+        select.form-control {
+            cursor: pointer;
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            
+            .header-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .btn {
+                flex: 1;
+                justify-content: center;
+            }
+            
+            .main-layout {
+                gap: 15px;
+            }
+            
+            .board-section {
+                padding: 15px;
+            }
+            
+            .board-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .timers {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .players {
+                flex-direction: column;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .control-btn {
+                width: 100%;
+            }
+            
+            .panel {
+                padding: 15px;
+            }
+            
+            .move-row {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo-text h1 {
+                font-size: 20px;
+            }
+            
+            .timer {
+                font-size: 20px;
+                padding: 8px 15px;
+            }
+            
+            .player-card {
+                padding: 15px;
+            }
+            
+            .player-avatar {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+        }
+
+        /* ===== UTILITIES ===== */
+        .hidden {
+            display: none !important;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-20 { margin-top: 20px; }
+        .mb-20 { margin-bottom: 20px; }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--secondary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2980b9;
+        }
     </style>
 </head>
 <body>
-    <div id="loading" class="loading">
-        <div class="spinner"></div>
-        <h2>♛ Chess Arena</h2>
-        <p>Загрузка...</p>
+    <!-- Loading Screen -->
+    <div id="loading">
+        <div class="chess-loader">
+            <div class="piece">♔</div>
+            <div class="piece">♕</div>
+            <div class="piece">♗</div>
+            <div class="piece">♘</div>
+            <div class="piece">♖</div>
+        </div>
+        <h1 style="color: white; margin-bottom: 10px;">ChessMaster</h1>
+        <p style="color: #bbb;">Подготовка к битве...</p>
     </div>
 
-    <div class="container" id="main" style="display: none;">
-        <div class="header">
-            <div class="logo">♛</div>
-            <div class="logo-text">
-                <h1>CHESS ARENA</h1>
-                <p>БИТВА УМОВ</p>
+    <!-- Main App -->
+    <div class="container" id="app" style="display: none;">
+        <!-- Header -->
+        <header>
+            <div class="logo">
+                <div class="logo-icon">♛</div>
+                <div class="logo-text">
+                    <h1>ChessMaster</h1>
+                    <p>Играй с друзьями онлайн</p>
+                </div>
             </div>
-        </div>
+            
+            <div class="header-buttons">
+                <button class="btn" onclick="showModal('createGameModal')">
+                    <i class="fas fa-plus"></i> Создать игру
+                </button>
+                <button class="btn btn-outline" onclick="showModal('joinGameModal')">
+                    <i class="fas fa-sign-in-alt"></i> Присоединиться
+                </button>
+                <button class="btn btn-outline" id="shareBtn" onclick="shareGame()">
+                    <i class="fas fa-share-alt"></i> Поделиться
+                </button>
+            </div>
+        </header>
 
-        <div class="status" id="status">Выберите режим игры</div>
-
-        <div class="game-area">
-            <div class="board-container">
-                <div class="board-wrapper">
-                    <div id="board"></div>
+        <!-- Main Content -->
+        <div class="main-layout">
+            <!-- Left: Board -->
+            <div class="board-section">
+                <div class="board-header">
+                    <div class="game-info">
+                        <div class="game-status" id="gameStatus">Выберите игру</div>
+                        <div class="game-mode" id="gameMode"></div>
+                    </div>
                     
-                    <div class="controls">
-                        <button onclick="startGame('ai')">🎮 Играть с AI</button>
-                        <button onclick="startGame('local')">👥 Локальная игра</button>
-                        <button onclick="undoMove()">↶ Отменить ход</button>
-                        <button onclick="newGame()">🔄 Новая игра</button>
-                    </div>
-
-                    <div class="timer">
-                        <span id="whiteTimer">10:00</span> ⚔ <span id="blackTimer">10:00</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="sidebar">
-                <div class="panel">
-                    <h3>🎮 Игроки</h3>
-                    <div class="player-info">
-                        <div class="player-color white-color"></div>
-                        <span id="whitePlayer">Белые (Вы)</span>
-                        <span style="margin-left: auto;">Ходы: <span id="whiteMoves">0</span></span>
-                    </div>
-                    <div class="player-info">
-                        <div class="player-color black-color"></div>
-                        <span id="blackPlayer">Чёрные (AI)</span>
-                        <span style="margin-left: auto;">Ходы: <span id="blackMoves">0</span></span>
+                    <div class="timers">
+                        <div class="timer white" id="whiteTimer">10:00</div>
+                        <div style="font-weight: bold; color: var(--dark);">vs</div>
+                        <div class="timer black" id="blackTimer">10:00</div>
                     </div>
                 </div>
 
-                <div class="panel">
-                    <h3>📜 История ходов</h3>
-                    <div class="move-history" id="moveHistory">
-                        <div style="text-align: center; color: #888; padding: 20px;">
-                            Ходы появятся здесь
+                <!-- Chess Board -->
+                <div id="board-container">
+                    <div id="board"></div>
+                </div>
+
+                <!-- Players -->
+                <div class="players">
+                    <div class="player-card white">
+                        <div class="player-avatar" id="whiteAvatar">?</div>
+                        <div class="player-info">
+                            <h3 id="whitePlayer">Белые</h3>
+                            <p id="whiteInfo">Ожидание игрока...</p>
+                        </div>
+                    </div>
+                    
+                    <div class="player-card black">
+                        <div class="player-avatar" id="blackAvatar">?</div>
+                        <div class="player-info">
+                            <h3 id="blackPlayer">Чёрные</h3>
+                            <p id="blackInfo">Ожидание игрока...</p>
                         </div>
                     </div>
                 </div>
 
+                <!-- Game Controls -->
+                <div class="controls">
+                    <button class="control-btn new-game" onclick="newGame()">
+                        <i class="fas fa-plus-circle"></i> Новая игра
+                    </button>
+                    <button class="control-btn undo" onclick="undoMove()">
+                        <i class="fas fa-undo"></i> Отменить ход
+                    </button>
+                    <button class="control-btn hint" onclick="getHint()">
+                        <i class="fas fa-lightbulb"></i> Подсказка
+                    </button>
+                    <button class="control-btn draw" onclick="offerDraw()">
+                        <i class="fas fa-handshake"></i> Ничья
+                    </button>
+                    <button class="control-btn resign" onclick="resignGame()">
+                        <i class="fas fa-flag"></i> Сдаться
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right: Sidebar -->
+            <div class="sidebar">
+                <!-- Move History -->
                 <div class="panel">
-                    <h3>💬 Чат игры</h3>
-                    <div class="chat-messages" id="chat">
-                        <div style="color: #4d7fff;">Добро пожаловать в Chess Arena!</div>
+                    <div class="panel-header">
+                        <h3><i class="fas fa-history"></i> История ходов</h3>
+                        <button class="btn btn-outline" onclick="clearHistory()" style="padding: 5px 10px;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <div class="moves-container" id="movesContainer">
+                        <div class="text-center" style="color: #999; padding: 20px;">
+                            <i class="fas fa-chess-board fa-2x"></i>
+                            <p style="margin-top: 10px;">Ходы появятся здесь</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-comments"></i> Чат</h3>
+                    </div>
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message system">
+                            <div class="message-header">
+                                <span>Система</span>
+                                <span>Сейчас</span>
+                            </div>
+                            Добро пожаловать в ChessMaster! Создайте игру или присоединитесь к существующей.
+                        </div>
                     </div>
                     <div class="chat-input">
-                        <input type="text" id="chatInput" placeholder="Введите сообщение...">
-                        <button onclick="sendMessage()">➤</button>
+                        <input type="text" id="chatInput" placeholder="Введите сообщение..." maxlength="200">
+                        <button onclick="sendChatMessage()">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Game Lobby -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-gamepad"></i> Активные игры</h3>
+                    </div>
+                    <div class="game-list" id="gameList">
+                        <div class="text-center" style="color: #999; padding: 20px;">
+                            <i class="fas fa-users fa-2x"></i>
+                            <p style="margin-top: 10px;">Нет активных игр</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Modals -->
+    <div id="createGameModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Создать игру</h2>
+                <button class="close-modal" onclick="hideModal('createGameModal')">&times;</button>
+            </div>
+            
+            <div class="form-group">
+                <label>Ваше имя</label>
+                <input type="text" class="form-control" id="playerName" placeholder="Введите ваше имя" value="Игрок">
+            </div>
+            
+            <div class="form-group">
+                <label>Время на игру</label>
+                <select class="form-control" id="gameTime">
+                    <option value="300">5 минут</option>
+                    <option value="600" selected>10 минут</option>
+                    <option value="900">15 минут</option>
+                    <option value="1800">30 минут</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Добавление времени</label>
+                <select class="form-control" id="incrementTime">
+                    <option value="0">Без добавления</option>
+                    <option value="2">+2 секунды за ход</option>
+                    <option value="5" selected>+5 секунд за ход</option>
+                    <option value="10">+10 секунд за ход</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Режим игры</label>
+                <select class="form-control" id="gameModeSelect">
+                    <option value="ai">Игра с компьютером</option>
+                    <option value="friend" selected>Игра с другом</option>
+                    <option value="public">Публичная игра</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Ваш цвет</label>
+                <select class="form-control" id="playerColor">
+                    <option value="random">Случайный</option>
+                    <option value="white">Белые</option>
+                    <option value="black">Чёрные</option>
+                </select>
+            </div>
+            
+            <button class="btn" style="width: 100%; padding: 15px; font-size: 16px;" onclick="createGame()">
+                <i class="fas fa-play"></i> Начать игру
+            </button>
+        </div>
+    </div>
+
+    <div id="joinGameModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Присоединиться к игре</h2>
+                <button class="close-modal" onclick="hideModal('joinGameModal')">&times;</button>
+            </div>
+            
+            <div class="form-group">
+                <label>Ваше имя</label>
+                <input type="text" class="form-control" id="joinPlayerName" placeholder="Введите ваше имя" value="Игрок">
+            </div>
+            
+            <div class="form-group">
+                <label>Код игры</label>
+                <input type="text" class="form-control" id="gameCode" placeholder="Введите код игры">
+            </div>
+            
+            <div id="publicGames" class="mt-20">
+                <h3 style="margin-bottom: 15px;">Публичные игры</h3>
+                <div id="publicGamesList">
+                    <!-- Games will be loaded here -->
+                </div>
+            </div>
+            
+            <button class="btn" style="width: 100%; padding: 15px; font-size: 16px;" onclick="joinGame()">
+                <i class="fas fa-sign-in-alt"></i> Присоединиться
+            </button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.13.4/chess.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chessboardjs@1.0.0/lib/js/chessboard-1.0.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@chrisoakman/chessboardjs@1.0.0/lib/js/chessboard-1.0.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chessboardjs@1.0.0/lib/css/chessboard-1.0.0.min.css">
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    
     <script>
-        // Простая версия игры без внешних библиотек
-        let gameState = {
-            board: null,
-            game: null,
-            isPlaying: false,
-            mode: null,
-            playerColor: 'white',
-            whiteTime: 600,
-            blackTime: 600,
-            timer: null,
-            moves: []
+        // ===== CONFIGURATION =====
+        const firebaseConfig = {
+            apiKey: "AIzaSyDPT3khXh8WyqEHzOe3ozWsayQ0HQTDSrw",
+            authDomain: "chesssecond-d16bf.firebaseapp.com",
+            databaseURL: "https://chesssecond-d16bf-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "chesssecond-d16bf",
+            storageBucket: "chesssecond-d16bf.firebasestorage.app",
+            messagingSenderId: "716530404724",
+            appId: "1:716530404724:web:ecf4743a4f6802e9f03021"
         };
 
-        // Инициализация
-        function init() {
-            console.log("Инициализация шахмат...");
+        // ===== GLOBAL VARIABLES =====
+        let game = null;
+        let board = null;
+        let timerInterval = null;
+        let gameId = null;
+        let playerId = Math.random().toString(36).substr(2, 9);
+        let playerName = "Игрок";
+        let playerColor = "white";
+        let gameMode = null;
+        let stockfish = null;
+        
+        // Game state
+        const state = {
+            whiteTime: 600,
+            blackTime: 600,
+            whiteMoves: 0,
+            blackMoves: 0,
+            moveHistory: [],
+            isPlaying: false,
+            currentTurn: 'white'
+        };
+
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
+            const database = firebase.database();
+            window.db = database;
             
-            // Создаем доску вручную
-            createBoard();
+            // Initialize chessboard
+            initChessboard();
             
-            // Скрываем загрузку
+            // Initialize Stockfish AI (Web Worker)
+            initStockfish();
+            
+            // Hide loading screen
             setTimeout(() => {
-                document.getElementById('loading').classList.add('hidden');
-                document.getElementById('main').style.display = 'block';
-                updateStatus('Готов к игре! Выберите режим.');
-            }, 500);
+                document.getElementById('loading').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('app').style.display = 'block';
+                    showNotification('ChessMaster готов к игре!', 'success');
+                }, 500);
+            }, 1500);
+            
+            // Listen for public games
+            listenForPublicGames();
+        });
+
+        function initChessboard() {
+            game = new Chess();
+            
+            const config = {
+                draggable: true,
+                position: 'start',
+                onDragStart: onDragStart,
+                onDrop: onDrop,
+                onSnapEnd: onSnapEnd,
+                pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png'
+            };
+            
+            board = Chessboard('board', config);
+            
+            // Update player names
+            updatePlayerInfo();
         }
 
-        // Создаем шахматную доску
-        function createBoard() {
-            const board = document.getElementById('board');
-            board.innerHTML = '';
-            
-            const size = 560;
-            const squareSize = size / 8;
-            
-            for (let row = 0; row < 8; row++) {
-                for (let col = 0; col < 8; col++) {
-                    const square = document.createElement('div');
-                    square.style.width = squareSize + 'px';
-                    square.style.height = squareSize + 'px';
-                    square.style.float = 'left';
-                    square.style.backgroundColor = (row + col) % 2 === 0 ? '#f0d9b5' : '#b58863';
-                    square.style.position = 'relative';
-                    square.dataset.row = row;
-                    square.dataset.col = col;
-                    square.dataset.pos = String.fromCharCode(97 + col) + (8 - row);
+        function initStockfish() {
+            // Stockfish AI via Web Worker
+            if (window.Worker) {
+                stockfish = new Worker('https://cdn.jsdelivr.net/npm/stockfish-js@0.11.0/src/stockfish.js');
+                
+                stockfish.onmessage = function(event) {
+                    const message = event.data;
                     
-                    // Добавляем фигуры в начальной позиции
-                    if (row === 1) {
-                        addPiece(square, '♟', 'black'); // Черные пешки
-                    } else if (row === 6) {
-                        addPiece(square, '♙', 'white'); // Белые пешки
-                    } else if (row === 0) {
-                        // Черные фигуры
-                        const pieces = ['♜', '♞', '♝', '♛', '♚', '♝', '♞', '♜'];
-                        addPiece(square, pieces[col], 'black');
-                    } else if (row === 7) {
-                        // Белые фигуры
-                        const pieces = ['♖', '♘', '♗', '♕', '♔', '♗', '♘', '♖'];
-                        addPiece(square, pieces[col], 'white');
+                    if (message.startsWith('bestmove')) {
+                        const move = message.split(' ')[1];
+                        if (move && move !== '(none)') {
+                            // Make the AI move
+                            const from = move.substr(0, 2);
+                            const to = move.substr(2, 2);
+                            const promotion = move.length > 4 ? move.substr(4, 1) : null;
+                            
+                            const aiMove = game.move({
+                                from: from,
+                                to: to,
+                                promotion: promotion || 'q'
+                            });
+                            
+                            if (aiMove) {
+                                board.position(game.fen());
+                                addMoveToHistory(aiMove);
+                                checkGameState();
+                                updateTurn();
+                            }
+                        }
                     }
-                    
-                    square.addEventListener('click', () => handleSquareClick(square));
-                    board.appendChild(square);
+                };
+                
+                // Initialize Stockfish
+                stockfish.postMessage('uci');
+                stockfish.postMessage('setoption name Skill Level value 20'); // Max skill
+                stockfish.postMessage('setoption name Contempt value 0');
+                stockfish.postMessage('setoption name Threads value 4');
+                stockfish.postMessage('setoption name Hash value 1024');
+            }
+        }
+
+        // ===== GAME LOGIC =====
+        function onDragStart(source, piece) {
+            if (!state.isPlaying) return false;
+            if (game.game_over()) return false;
+            
+            // Check if it's player's turn
+            const pieceColor = piece.charAt(0);
+            const turnColor = game.turn();
+            
+            // In AI mode, player can only move their color
+            if (gameMode === 'ai') {
+                const playerPieceColor = playerColor === 'white' ? 'w' : 'b';
+                if (pieceColor !== playerPieceColor) return false;
+                if (turnColor !== playerPieceColor) return false;
+            } else {
+                // In multiplayer, check turn
+                if (pieceColor !== turnColor) return false;
+            }
+            
+            return true;
+        }
+
+        function onDrop(source, target) {
+            if (!state.isPlaying) return 'snapback';
+            
+            // Check for pawn promotion
+            let promotion = null;
+            const piece = game.get(source);
+            if (piece && piece.type === 'p') {
+                const row = target.charAt(1);
+                if ((piece.color === 'w' && row === '8') || (piece.color === 'b' && row === '1')) {
+                    promotion = 'q'; // Always queen for simplicity
                 }
             }
-        }
-
-        function addPiece(square, symbol, color) {
-            const piece = document.createElement('div');
-            piece.textContent = symbol;
-            piece.style.fontSize = '40px';
-            piece.style.textAlign = 'center';
-            piece.style.lineHeight = '70px'; // squareSize = 70
-            piece.style.cursor = 'grab';
-            piece.style.userSelect = 'none';
-            piece.dataset.color = color;
-            piece.dataset.type = getPieceType(symbol);
-            square.dataset.piece = symbol;
-            square.appendChild(piece);
-        }
-
-        function getPieceType(symbol) {
-            const pieces = {
-                '♙': 'pawn', '♟': 'pawn',
-                '♖': 'rook', '♜': 'rook',
-                '♘': 'knight', '♞': 'knight',
-                '♗': 'bishop', '♝': 'bishop',
-                '♕': 'queen', '♛': 'queen',
-                '♔': 'king', '♚': 'king'
-            };
-            return pieces[symbol] || 'pawn';
-        }
-
-        let selectedSquare = null;
-
-        function handleSquareClick(square) {
-            if (!gameState.isPlaying) return;
             
-            const piece = square.dataset.piece;
-            
-            if (selectedSquare) {
-                // Пытаемся сделать ход
-                makeMove(selectedSquare, square);
-                selectedSquare = null;
-                clearHighlights();
-            } else if (piece) {
-                // Выбираем фигуру
-                const pieceColor = piece === piece.toUpperCase() ? 'white' : 'black';
-                
-                // Проверяем, может ли игрок ходить этой фигурой
-                if (gameState.mode === 'ai' && gameState.playerColor !== pieceColor) return;
-                
-                selectedSquare = square;
-                highlightSquare(square);
-                showPossibleMoves(square);
-            }
-        }
-
-        function highlightSquare(square) {
-            square.style.boxShadow = 'inset 0 0 0 3px #4d7fff';
-        }
-
-        function clearHighlights() {
-            document.querySelectorAll('#board > div').forEach(sq => {
-                sq.style.boxShadow = '';
+            const move = game.move({
+                from: source,
+                to: target,
+                promotion: promotion
             });
-        }
-
-        function showPossibleMoves(square) {
-            // Простая логика возможных ходов
-            const piece = square.dataset.piece;
-            const type = getPieceType(piece);
-            const row = parseInt(square.dataset.row);
-            const col = parseInt(square.dataset.col);
-            const color = piece === piece.toUpperCase() ? 'white' : 'black';
             
-            // Для пешки
-            if (type === 'pawn') {
-                const direction = color === 'white' ? -1 : 1;
-                const targetRow = row + direction;
-                
-                if (targetRow >= 0 && targetRow < 8) {
-                    const forward = document.querySelector(`[data-row="${targetRow}"][data-col="${col}"]`);
-                    if (!forward.dataset.piece) {
-                        forward.style.boxShadow = 'inset 0 0 0 3px #00ff00';
-                    }
-                }
-            }
-        }
-
-        function makeMove(from, to) {
-            if (!from.dataset.piece) return;
+            if (move === null) return 'snapback';
             
-            // Переносим фигуру
-            const piece = from.querySelector('div');
-            to.appendChild(piece.cloneNode(true));
-            from.removeChild(piece);
-            to.dataset.piece = from.dataset.piece;
-            from.dataset.piece = '';
+            // Update board
+            board.position(game.fen());
             
-            // Добавляем ход в историю
-            const move = {
-                from: from.dataset.pos,
-                to: to.dataset.pos,
-                piece: to.dataset.piece
-            };
-            
+            // Add to history
             addMoveToHistory(move);
             
-            // Меняем ход
-            toggleTurn();
+            // Update move counts
+            updateMoveCounts();
             
-            // Если игра с AI
-            if (gameState.mode === 'ai' && gameState.playerColor === 'white') {
-                setTimeout(makeAIMove, 500);
+            // Check game state
+            checkGameState();
+            
+            // Update turn
+            updateTurn();
+            
+            // If online game, send move to Firebase
+            if (gameId && (gameMode === 'friend' || gameMode === 'public')) {
+                sendMoveToFirebase(move);
             }
+            
+            // If AI mode and it's AI's turn
+            if (gameMode === 'ai' && !game.game_over()) {
+                setTimeout(() => makeAIMove(), 500);
+            }
+            
+            return true;
+        }
+
+        function onSnapEnd() {
+            board.position(game.fen());
         }
 
         function makeAIMove() {
-            if (!gameState.isPlaying) return;
-            
-            // Простой AI - случайный ход
-            const pieces = document.querySelectorAll('#board > div[data-piece]');
-            const blackPieces = Array.from(pieces).filter(sq => {
-                const piece = sq.dataset.piece;
-                return piece && piece === piece.toLowerCase(); // Черные фигуры в нижнем регистре
-            });
-            
-            if (blackPieces.length === 0) return;
-            
-            const randomPiece = blackPieces[Math.floor(Math.random() * blackPieces.length)];
-            const possibleMoves = getPossibleMoves(randomPiece);
-            
-            if (possibleMoves.length > 0) {
-                const randomMove = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
-                makeMove(randomPiece, randomMove);
+            if (!stockfish || game.game_over() || game.turn() === (playerColor === 'white' ? 'w' : 'b')) {
+                return;
             }
+            
+            // Use Stockfish to find best move
+            stockfish.postMessage('position fen ' + game.fen());
+            stockfish.postMessage('go depth 15 movetime 2000'); // Think for 2 seconds
         }
 
-        function getPossibleMoves(square) {
-            const moves = [];
-            const row = parseInt(square.dataset.row);
-            const col = parseInt(square.dataset.col);
-            const piece = square.dataset.piece;
-            const type = getPieceType(piece);
+        // ===== GAME MANAGEMENT =====
+        function createGame() {
+            const name = document.getElementById('playerName').value || 'Игрок';
+            const time = parseInt(document.getElementById('gameTime').value) || 600;
+            const increment = parseInt(document.getElementById('incrementTime').value) || 5;
+            const mode = document.getElementById('gameModeSelect').value;
+            const color = document.getElementById('playerColor').value;
             
-            // Простые ходы для каждой фигуры
-            if (type === 'pawn') {
-                const direction = piece === piece.toLowerCase() ? 1 : -1; // Черные вниз, белые вверх
-                const targetRow = row + direction;
-                if (targetRow >= 0 && targetRow < 8) {
-                    const forward = document.querySelector(`[data-row="${targetRow}"][data-col="${col}"]`);
-                    if (!forward.dataset.piece) moves.push(forward);
-                }
-            } else if (type === 'rook') {
-                // Горизонтальные и вертикальные ходы
-                for (let i = 0; i < 8; i++) {
-                    if (i !== row) moves.push(document.querySelector(`[data-row="${i}"][data-col="${col}"]`));
-                    if (i !== col) moves.push(document.querySelector(`[data-row="${row}"][data-col="${i}"]`));
-                }
-            }
+            playerName = name;
+            gameMode = mode;
             
-            return moves.filter(move => move);
-        }
-
-        function addMoveToHistory(move) {
-            const history = document.getElementById('moveHistory');
-            
-            // Убираем placeholder
-            if (history.children.length === 1 && history.children[0].textContent.includes('появятся')) {
-                history.innerHTML = '';
-            }
-            
-            const moveNumber = Math.floor(gameState.moves.length / 2) + 1;
-            const isWhiteMove = gameState.moves.length % 2 === 0;
-            
-            if (isWhiteMove) {
-                const row = document.createElement('div');
-                row.className = 'move-row';
-                row.innerHTML = `
-                    <span>${moveNumber}. ${move.piece} ${move.from}→${move.to}</span>
-                    <span style="color: #888">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                `;
-                history.appendChild(row);
+            // Determine player color
+            if (color === 'random') {
+                playerColor = Math.random() > 0.5 ? 'white' : 'black';
             } else {
-                const lastRow = history.lastElementChild;
-                lastRow.innerHTML = `
-                    <span>${moveNumber}. ${lastRow.textContent.split('. ')[1].split(' ')[0]} ${move.piece} ${move.from}→${move.to}</span>
-                    <span style="color: #888">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                `;
+                playerColor = color;
             }
             
-            gameState.moves.push(move);
-            updateMoveCounts();
+            // Reset game
+            resetGame(time);
             
-            // Скроллим вниз
-            history.scrollTop = history.scrollHeight;
-        }
-
-        function updateMoveCounts() {
-            const whiteMoves = gameState.moves.filter(m => {
-                const piece = m.piece;
-                return piece && piece === piece.toUpperCase(); // Белые в верхнем регистре
-            }).length;
-            
-            const blackMoves = gameState.moves.length - whiteMoves;
-            
-            document.getElementById('whiteMoves').textContent = whiteMoves;
-            document.getElementById('blackMoves').textContent = blackMoves;
-        }
-
-        function toggleTurn() {
-            const turn = document.getElementById('status').textContent.includes('белых') ? 'черных' : 'белых';
-            updateStatus(`Ход ${turn}`);
-        }
-
-        function startGame(mode) {
-            gameState.mode = mode;
-            gameState.isPlaying = true;
-            gameState.moves = [];
-            
-            // Сбрасываем доску
-            createBoard();
-            
-            // Настраиваем имена игроков
-            if (mode === 'ai') {
-                gameState.playerColor = 'white';
-                document.getElementById('whitePlayer').textContent = 'Белые (Вы)';
-                document.getElementById('blackPlayer').textContent = 'Чёрные (AI)';
-                updateStatus('Ваш ход (белые)');
+            // Create game in Firebase for multiplayer
+            if (mode === 'friend' || mode === 'public') {
+                createFirebaseGame(time, increment, mode);
             } else {
-                document.getElementById('whitePlayer').textContent = 'Белые (Игрок 1)';
-                document.getElementById('blackPlayer').textContent = 'Чёрные (Игрок 2)';
-                updateStatus('Ход белых');
+                // AI game - start immediately
+                startGame();
+                
+                if (playerColor === 'black') {
+                    setTimeout(() => makeAIMove(), 1000);
+                }
             }
             
-            // Сбрасываем счетчики
+            hideModal('createGameModal');
+            showNotification('Игра создана!', 'success');
+        }
+
+        function joinGame() {
+            const name = document.getElementById('joinPlayerName').value || 'Игрок';
+            const code = document.getElementById('gameCode').value;
+            
+            playerName = name;
+            
+            if (!code) {
+                showNotification('Введите код игры', 'error');
+                return;
+            }
+            
+            // Join game via Firebase
+            joinFirebaseGame(code);
+            hideModal('joinGameModal');
+        }
+
+        function newGame() {
+            if (state.isPlaying && !confirm('Текущая игра будет потеряна. Продолжить?')) {
+                return;
+            }
+            
+            showModal('createGameModal');
+        }
+
+        function resetGame(time = 600) {
+            // Reset chess game
+            game = new Chess();
+            board.position('start');
+            
+            // Reset state
+            state.whiteTime = time;
+            state.blackTime = time;
+            state.whiteMoves = 0;
+            state.blackMoves = 0;
+            state.moveHistory = [];
+            state.isPlaying = true;
+            state.currentTurn = 'white';
+            
+            // Reset UI
+            document.getElementById('whiteTimer').textContent = formatTime(time);
+            document.getElementById('blackTimer').textContent = formatTime(time);
             document.getElementById('whiteMoves').textContent = '0';
             document.getElementById('blackMoves').textContent = '0';
-            document.getElementById('moveHistory').innerHTML = `
-                <div style="text-align: center; color: #888; padding: 20px;">
-                    Ходы появятся здесь
-                </div>
-            `;
             
-            // Запускаем таймер
+            // Clear history
+            clearHistory();
+            
+            // Update status
+            updateGameStatus('Игра началась!');
+        }
+
+        function startGame() {
+            state.isPlaying = true;
+            
+            // Update player info
+            updatePlayerInfo();
+            
+            // Start timer
             startTimer();
             
-            addChatMessage('Система', `Игра началась! Режим: ${mode === 'ai' ? 'против AI' : 'два игрока'}`);
+            // Update game status
+            if (gameMode === 'ai') {
+                updateGameStatus(`Игра с AI (Вы играете ${playerColor === 'white' ? 'белыми' : 'чёрными'})`);
+            } else {
+                updateGameStatus('Ожидание соперника...');
+            }
+            
+            // Share link if multiplayer
+            if (gameId && (gameMode === 'friend' || gameMode === 'public')) {
+                updateShareButton();
+            }
         }
 
+        // ===== TIMER =====
         function startTimer() {
-            if (gameState.timer) clearInterval(gameState.timer);
+            if (timerInterval) clearInterval(timerInterval);
             
-            gameState.whiteTime = 600;
-            gameState.blackTime = 600;
-            
-            updateTimers();
-            
-            gameState.timer = setInterval(() => {
-                if (document.getElementById('status').textContent.includes('белых')) {
-                    gameState.whiteTime--;
+            timerInterval = setInterval(() => {
+                if (game.turn() === 'w') {
+                    state.whiteTime--;
                 } else {
-                    gameState.blackTime--;
+                    state.blackTime--;
                 }
                 
-                updateTimers();
+                // Update timers
+                document.getElementById('whiteTimer').textContent = formatTime(state.whiteTime);
+                document.getElementById('blackTimer').textContent = formatTime(state.blackTime);
                 
-                // Проверяем время
-                if (gameState.whiteTime <= 0) {
+                // Check timeout
+                if (state.whiteTime <= 0) {
                     endGame('black', 'Время белых вышло!');
-                } else if (gameState.blackTime <= 0) {
-                    endGame('white', 'Время черных вышло!');
+                } else if (state.blackTime <= 0) {
+                    endGame('white', 'Время чёрных вышло!');
                 }
             }, 1000);
-        }
-
-        function updateTimers() {
-            document.getElementById('whiteTimer').textContent = formatTime(gameState.whiteTime);
-            document.getElementById('blackTimer').textContent = formatTime(gameState.blackTime);
         }
 
         function formatTime(seconds) {
@@ -664,88 +1365,549 @@
             return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         }
 
-        function endGame(winner, reason) {
-            if (gameState.timer) clearInterval(gameState.timer);
-            gameState.isPlaying = false;
-            
-            updateStatus(`🎉 Победа ${winner === 'white' ? 'белых' : 'черных'}! ${reason}`);
-            addChatMessage('Система', `Игра окончена! ${reason}`);
+        // ===== GAME STATE =====
+        function checkGameState() {
+            if (game.in_checkmate()) {
+                const winner = game.turn() === 'w' ? 'Чёрные' : 'Белые';
+                endGame(winner === 'Белые' ? 'white' : 'black', `Мат! Победа ${winner}!`);
+            } else if (game.in_draw()) {
+                endGame('draw', 'Ничья!');
+            } else if (game.in_check()) {
+                updateGameStatus('ШАХ!');
+            } else {
+                updateTurn();
+            }
         }
 
-        function undoMove() {
-            if (gameState.moves.length === 0) {
-                addChatMessage('Система', 'Нет ходов для отмены');
-                return;
+        function updateTurn() {
+            const turn = game.turn() === 'w' ? 'белых' : 'чёрных';
+            updateGameStatus(`Ход ${turn}`);
+            state.currentTurn = game.turn() === 'w' ? 'white' : 'black';
+        }
+
+        function endGame(winner, message) {
+            state.isPlaying = false;
+            clearInterval(timerInterval);
+            
+            updateGameStatus(message);
+            showNotification(message, 'success');
+            
+            // Add to chat
+            addChatMessage('Система', message);
+            
+            // Update Firebase if multiplayer
+            if (gameId && (gameMode === 'friend' || gameMode === 'public')) {
+                endFirebaseGame(winner);
+            }
+        }
+
+        // ===== UI UPDATES =====
+        function updatePlayerInfo() {
+            // White player
+            if (gameMode === 'ai') {
+                if (playerColor === 'white') {
+                    document.getElementById('whitePlayer').textContent = playerName;
+                    document.getElementById('whiteInfo').textContent = 'Вы';
+                    document.getElementById('whiteAvatar').textContent = playerName.charAt(0);
+                    
+                    document.getElementById('blackPlayer').textContent = 'Компьютер';
+                    document.getElementById('blackInfo').textContent = 'AI (Сложный)';
+                    document.getElementById('blackAvatar').textContent = '🤖';
+                } else {
+                    document.getElementById('whitePlayer').textContent = 'Компьютер';
+                    document.getElementById('whiteInfo').textContent = 'AI (Сложный)';
+                    document.getElementById('whiteAvatar').textContent = '🤖';
+                    
+                    document.getElementById('blackPlayer').textContent = playerName;
+                    document.getElementById('blackInfo').textContent = 'Вы';
+                    document.getElementById('blackAvatar').textContent = playerName.charAt(0);
+                }
+            } else {
+                // Multiplayer
+                document.getElementById('whitePlayer').textContent = 'Белые';
+                document.getElementById('whiteInfo').textContent = playerColor === 'white' ? 'Вы' : 'Ожидание...';
+                document.getElementById('whiteAvatar').textContent = playerColor === 'white' ? playerName.charAt(0) : '?';
+                
+                document.getElementById('blackPlayer').textContent = 'Чёрные';
+                document.getElementById('blackInfo').textContent = playerColor === 'black' ? 'Вы' : 'Ожидание...';
+                document.getElementById('blackAvatar').textContent = playerColor === 'black' ? playerName.charAt(0) : '?';
+            }
+        }
+
+        function updateGameStatus(text) {
+            document.getElementById('gameStatus').textContent = text;
+        }
+
+        function updateMoveCounts() {
+            const whiteMoves = state.moveHistory.filter(m => m.color === 'w').length;
+            const blackMoves = state.moveHistory.length - whiteMoves;
+            
+            document.getElementById('whiteMoves').textContent = whiteMoves;
+            document.getElementById('blackMoves').textContent = blackMoves;
+        }
+
+        function addMoveToHistory(move) {
+            state.moveHistory.push(move);
+            
+            const container = document.getElementById('movesContainer');
+            
+            // Clear placeholder
+            if (container.querySelector('.text-center')) {
+                container.innerHTML = '';
             }
             
-            const lastMove = gameState.moves.pop();
-            addChatMessage('Система', `Ход отменен: ${lastMove.piece} ${lastMove.from}→${lastMove.to}`);
-            updateMoveCounts();
+            const moveNumber = Math.floor(state.moveHistory.length / 2) + 1;
+            const isWhiteMove = state.moveHistory.length % 2 === 1;
             
-            // TODO: Реализовать реальную отмену хода
-            updateStatus('Ход отменен');
+            if (isWhiteMove) {
+                const row = document.createElement('div');
+                row.className = 'move-row';
+                row.innerHTML = `
+                    <div class="move-number">${moveNumber}.</div>
+                    <div class="move-white">${move.san}</div>
+                    <div class="move-black"></div>
+                `;
+                container.appendChild(row);
+            } else {
+                const lastRow = container.lastElementChild;
+                if (lastRow) {
+                    lastRow.querySelector('.move-black').textContent = move.san;
+                }
+            }
+            
+            // Scroll to bottom
+            container.scrollTop = container.scrollHeight;
         }
 
-        function newGame() {
-            if (gameState.timer) clearInterval(gameState.timer);
-            gameState.isPlaying = false;
-            gameState.moves = [];
-            
-            createBoard();
-            updateStatus('Выберите режим игры');
-            updateTimers();
-            
-            document.getElementById('whiteMoves').textContent = '0';
-            document.getElementById('blackMoves').textContent = '0';
-            document.getElementById('moveHistory').innerHTML = `
-                <div style="text-align: center; color: #888; padding: 20px;">
-                    Ходы появятся здесь
+        function clearHistory() {
+            const container = document.getElementById('movesContainer');
+            container.innerHTML = `
+                <div class="text-center" style="color: #999; padding: 20px;">
+                    <i class="fas fa-chess-board fa-2x"></i>
+                    <p style="margin-top: 10px;">Ходы появятся здесь</p>
                 </div>
             `;
-            
-            addChatMessage('Система', 'Новая игра готова к началу!');
         }
 
-        function sendMessage() {
+        // ===== CHAT =====
+        function sendChatMessage() {
             const input = document.getElementById('chatInput');
             const message = input.value.trim();
             
-            if (message) {
-                addChatMessage('Вы', message);
-                input.value = '';
+            if (!message) return;
+            
+            // Add to local chat
+            addChatMessage(playerName, message, true);
+            
+            // Send to Firebase if multiplayer
+            if (gameId && (gameMode === 'friend' || gameMode === 'public')) {
+                sendChatToFirebase(message);
+            }
+            
+            input.value = '';
+        }
+
+        function addChatMessage(sender, message, isOwn = false) {
+            const container = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            
+            messageDiv.className = `message ${isOwn ? 'own' : sender === 'Система' ? 'system' : 'opponent'}`;
+            messageDiv.innerHTML = `
+                <div class="message-header">
+                    <span>${sender}</span>
+                    <span>${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                </div>
+                ${message}
+            `;
+            
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // ===== CONTROLS =====
+        function undoMove() {
+            if (state.moveHistory.length === 0) {
+                showNotification('Нет ходов для отмены', 'info');
+                return;
+            }
+            
+            // Undo last move
+            game.undo();
+            
+            // If AI mode, undo AI move too
+            if (gameMode === 'ai' && state.moveHistory.length > 1) {
+                game.undo();
+            }
+            
+            // Update board
+            board.position(game.fen());
+            
+            // Remove from history
+            state.moveHistory.pop();
+            if (gameMode === 'ai') state.moveHistory.pop();
+            
+            // Update history display
+            updateHistoryDisplay();
+            
+            showNotification('Ход отменён', 'info');
+        }
+
+        function getHint() {
+            if (!state.isPlaying || game.game_over()) {
+                showNotification('Игра не начата или завершена', 'info');
+                return;
+            }
+            
+            // Use Stockfish for hint
+            if (stockfish) {
+                stockfish.postMessage('position fen ' + game.fen());
+                stockfish.postMessage('go depth 10 movetime 1000');
                 
-                // Ответ AI
-                if (gameState.mode === 'ai' && gameState.isPlaying) {
-                    const responses = [
-                        'Хороший ход!',
-                        'Интересно...',
-                        'Думаю над ответом',
-                        'Сложная позиция!',
-                        'У тебя хорошо получается!'
-                    ];
-                    
-                    setTimeout(() => {
-                        addChatMessage('AI', responses[Math.floor(Math.random() * responses.length)]);
-                    }, 1000);
+                showNotification('AI анализирует позицию...', 'info');
+            }
+        }
+
+        function offerDraw() {
+            if (!state.isPlaying) return;
+            
+            if (confirm('Предложить ничью?')) {
+                showNotification('Ничья предложена', 'info');
+                addChatMessage('Система', `${playerName} предлагает ничью`);
+                
+                // In multiplayer, send draw offer
+                if (gameId && (gameMode === 'friend' || gameMode === 'public')) {
+                    offerDrawFirebase();
                 }
             }
         }
 
-        function addChatMessage(sender, message) {
-            const chat = document.getElementById('chat');
-            const messageDiv = document.createElement('div');
-            messageDiv.innerHTML = `<strong>${sender}:</strong> ${message}`;
-            messageDiv.style.marginBottom = '5px';
-            chat.appendChild(messageDiv);
-            chat.scrollTop = chat.scrollHeight;
+        function resignGame() {
+            if (!state.isPlaying) return;
+            
+            if (confirm('Вы уверены, что хотите сдаться?')) {
+                const winner = playerColor === 'white' ? 'black' : 'white';
+                endGame(winner, `${playerName} сдался!`);
+                addChatMessage('Система', `${playerName} сдался!`);
+            }
         }
 
-        function updateStatus(text) {
-            document.getElementById('status').textContent = text;
+        function shareGame() {
+            if (!gameId) {
+                showNotification('Сначала создайте игру', 'info');
+                return;
+            }
+            
+            const url = `${window.location.origin}${window.location.pathname}?game=${gameId}`;
+            
+            // Copy to clipboard
+            navigator.clipboard.writeText(url).then(() => {
+                showNotification('Ссылка скопирована в буфер обмена!', 'success');
+            });
         }
 
-        // Запуск при загрузке
-        window.addEventListener('DOMContentLoaded', init);
+        // ===== MODAL FUNCTIONS =====
+        function showModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function hideModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 25px;
+                background: ${type === 'success' ? '#27ae60' : type === 'error' ? '#e74c3c' : '#3498db'};
+                color: white;
+                border-radius: 8px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                z-index: 1000;
+                animation: slideIn 0.3s;
+            `;
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // ===== FIREBASE FUNCTIONS =====
+        function createFirebaseGame(time, increment, mode) {
+            gameId = 'game_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+            
+            const gameData = {
+                creator: playerId,
+                creatorName: playerName,
+                creatorColor: playerColor,
+                whitePlayer: playerColor === 'white' ? playerId : null,
+                blackPlayer: playerColor === 'black' ? playerId : null,
+                timeControl: time,
+                increment: increment,
+                status: 'waiting',
+                mode: mode,
+                fen: 'start',
+                moves: [],
+                chat: [],
+                createdAt: Date.now()
+            };
+            
+            // Save to Firebase
+            db.ref('games/' + gameId).set(gameData);
+            
+            // Listen for updates
+            listenToGame(gameId);
+            
+            // Start game
+            startGame();
+            
+            return gameId;
+        }
+
+        function joinFirebaseGame(code) {
+            gameId = code;
+            
+            db.ref('games/' + gameId).once('value').then(snapshot => {
+                const gameData = snapshot.val();
+                
+                if (!gameData) {
+                    showNotification('Игра не найдена', 'error');
+                    return;
+                }
+                
+                if (gameData.status !== 'waiting') {
+                    showNotification('Игра уже начата', 'error');
+                    return;
+                }
+                
+                // Determine color
+                if (!gameData.whitePlayer) {
+                    playerColor = 'white';
+                    gameData.whitePlayer = playerId;
+                } else if (!gameData.blackPlayer) {
+                    playerColor = 'black';
+                    gameData.blackPlayer = playerId;
+                } else {
+                    showNotification('Игра уже заполнена', 'error');
+                    return;
+                }
+                
+                // Update game
+                gameData.status = 'active';
+                gameData[playerColor === 'white' ? 'whitePlayerName' : 'blackPlayerName'] = playerName;
+                
+                db.ref('games/' + gameId).update(gameData);
+                
+                // Load game state
+                resetGame(gameData.timeControl);
+                startGame();
+                updateGameStatus('Игра началась!');
+                
+                // Listen for updates
+                listenToGame(gameId);
+                
+                showNotification('Вы присоединились к игре!', 'success');
+            });
+        }
+
+        function listenToGame(gameId) {
+            db.ref('games/' + gameId).on('value', snapshot => {
+                const gameData = snapshot.val();
+                
+                if (!gameData) return;
+                
+                // Update game state
+                if (gameData.status === 'active') {
+                    // Update player names
+                    if (gameData.whitePlayerName) {
+                        document.getElementById('whiteInfo').textContent = 
+                            gameData.whitePlayer === playerId ? 'Вы' : gameData.whitePlayerName;
+                        document.getElementById('whiteAvatar').textContent = 
+                            gameData.whitePlayer === playerId ? playerName.charAt(0) : gameData.whitePlayerName.charAt(0);
+                    }
+                    
+                    if (gameData.blackPlayerName) {
+                        document.getElementById('blackInfo').textContent = 
+                            gameData.blackPlayer === playerId ? 'Вы' : gameData.blackPlayerName;
+                        document.getElementById('blackAvatar').textContent = 
+                            gameData.blackPlayer === playerId ? playerName.charAt(0) : gameData.blackPlayerName.charAt(0);
+                    }
+                    
+                    // Update board position
+                    if (gameData.fen && gameData.fen !== game.fen()) {
+                        game.load(gameData.fen);
+                        board.position(gameData.fen);
+                    }
+                    
+                    // Update moves
+                    if (gameData.moves && gameData.moves.length > state.moveHistory.length) {
+                        const newMoves = gameData.moves.slice(state.moveHistory.length);
+                        newMoves.forEach(moveData => {
+                            const move = game.move(moveData);
+                            if (move) {
+                                addMoveToHistory(move);
+                            }
+                        });
+                    }
+                    
+                    // Update chat
+                    if (gameData.chat && gameData.chat.length > 0) {
+                        const chatContainer = document.getElementById('chatMessages');
+                        const messageCount = chatContainer.querySelectorAll('.message').length - 1; // -1 for system message
+                        
+                        if (gameData.chat.length > messageCount) {
+                            const newMessages = gameData.chat.slice(messageCount);
+                            newMessages.forEach(msg => {
+                                if (msg.sender !== playerName) { // Don't show own messages twice
+                                    addChatMessage(msg.sender, msg.text);
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+        }
+
+        function sendMoveToFirebase(move) {
+            if (!gameId) return;
+            
+            const moveData = {
+                from: move.from,
+                to: move.to,
+                san: move.san,
+                color: move.color,
+                piece: move.piece,
+                timestamp: Date.now()
+            };
+            
+            db.ref('games/' + gameId + '/moves').push(moveData);
+            db.ref('games/' + gameId).update({ fen: game.fen() });
+        }
+
+        function sendChatToFirebase(message) {
+            if (!gameId) return;
+            
+            const chatData = {
+                sender: playerName,
+                text: message,
+                timestamp: Date.now()
+            };
+            
+            db.ref('games/' + gameId + '/chat').push(chatData);
+        }
+
+        function offerDrawFirebase() {
+            if (!gameId) return;
+            
+            db.ref('games/' + gameId + '/chat').push({
+                sender: 'Система',
+                text: `${playerName} предлагает ничью`,
+                timestamp: Date.now()
+            });
+        }
+
+        function endFirebaseGame(winner) {
+            if (!gameId) return;
+            
+            db.ref('games/' + gameId).update({
+                status: 'finished',
+                winner: winner,
+                finishedAt: Date.now()
+            });
+        }
+
+        function listenForPublicGames() {
+            db.ref('games').on('value', snapshot => {
+                const games = snapshot.val();
+                const container = document.getElementById('publicGamesList');
+                
+                if (!games) {
+                    container.innerHTML = '<p style="color: #999; text-align: center;">Нет публичных игр</p>';
+                    return;
+                }
+                
+                let html = '';
+                let count = 0;
+                
+                for (const [id, gameData] of Object.entries(games)) {
+                    if (gameData.mode === 'public' && gameData.status === 'waiting') {
+                        count++;
+                        html += `
+                            <div class="game-item" onclick="joinPublicGame('${id}')">
+                                <div class="game-info-small">
+                                    <strong>${gameData.creatorName}</strong>
+                                    <div class="game-players">
+                                        ${gameData.whitePlayer ? '⚪' : '◯'} vs ${gameData.blackPlayer ? '⚫' : '◯'}
+                                    </div>
+                                </div>
+                                <div class="game-time">
+                                    ${formatTime(gameData.timeControl)} +${gameData.increment}
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+                
+                if (count === 0) {
+                    container.innerHTML = '<p style="color: #999; text-align: center;">Нет публичных игр</p>';
+                } else {
+                    container.innerHTML = html;
+                }
+            });
+        }
+
+        function joinPublicGame(id) {
+            document.getElementById('gameCode').value = id;
+            joinGame();
+        }
+
+        function updateShareButton() {
+            const shareBtn = document.getElementById('shareBtn');
+            shareBtn.innerHTML = `<i class="fas fa-share-alt"></i> Код: ${gameId.substr(5, 8)}`;
+            shareBtn.title = 'Нажмите чтобы скопировать ссылку';
+        }
+
+        function updateHistoryDisplay() {
+            const container = document.getElementById('movesContainer');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < state.moveHistory.length; i += 2) {
+                const moveNumber = Math.floor(i / 2) + 1;
+                const whiteMove = state.moveHistory[i];
+                const blackMove = state.moveHistory[i + 1];
+                
+                const row = document.createElement('div');
+                row.className = 'move-row';
+                row.innerHTML = `
+                    <div class="move-number">${moveNumber}.</div>
+                    <div class="move-white">${whiteMove.san}</div>
+                    <div class="move-black">${blackMove ? blackMove.san : ''}</div>
+                `;
+                container.appendChild(row);
+            }
+            
+            if (state.moveHistory.length === 0) {
+                clearHistory();
+            }
+        }
+
+        // Check URL for game ID
+        const urlParams = new URLSearchParams(window.location.search);
+        const gameIdFromUrl = urlParams.get('game');
+        if (gameIdFromUrl) {
+            setTimeout(() => {
+                document.getElementById('gameCode').value = gameIdFromUrl;
+                showModal('joinGameModal');
+            }, 2000);
+        }
     </script>
 </body>
 </html>
