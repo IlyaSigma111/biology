@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Человек и окружающая среда | Биология 9 класс | Викторина</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, 'Segoe UI', sans-serif;
+            background: radial-gradient(circle at 20% 30%, #1a2e2a, #0a1a15);
+            color: #eef4e0;
+            min-height: 100vh;
+            padding: 2rem 1.5rem;
+            line-height: 1.5;
+        }
+
+        /* глоу-сферы */
+        .glow-sphere {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: 0.2;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .sphere-1 { width: 55vw; height: 55vw; top: -30vh; left: -20vw; background: #2b7a5e; }
+        .sphere-2 { width: 50vw; height: 50vw; bottom: -30vh; right: -10vw; background: #3a6e4a; }
+        .sphere-3 { width: 40vw; height: 40vw; top: 50%; left: 50%; background: #c5a03a; }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .glass-card {
+            background: rgba(20, 35, 30, 0.55);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(100, 200, 120, 0.3);
+            border-radius: 2rem;
+            padding: 1.8rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #e0ffe0, #6ade80);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .score-box {
+            background: rgba(74, 222, 128, 0.2);
+            border: 1px solid #6ade80;
+            border-radius: 2rem;
+            padding: 0.3rem 1.2rem;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .quiz-question {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 1.5rem;
+            padding: 1.2rem;
+            margin-bottom: 1.2rem;
+            border-left: 4px solid #6ade80;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            margin-bottom: 0.8rem;
+        }
+        .q-num {
+            background: #6ade80;
+            color: #0a1a1a;
+            font-weight: bold;
+            padding: 0.2rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+        }
+        .q-type {
+            font-size: 0.7rem;
+            opacity: 0.6;
+        }
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin: 0.8rem 0;
+        }
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin: 0.8rem 0;
+        }
+        .option-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(106, 222, 128, 0.4);
+            border-radius: 2rem;
+            padding: 0.5rem 1.2rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+            color: #e0ffe0;
+        }
+        .option-btn:hover:not(.disabled) {
+            background: rgba(106, 222, 128, 0.2);
+            transform: scale(0.96);
+        }
+        .feedback {
+            margin-top: 0.8rem;
+            padding: 0.8rem;
+            border-radius: 1rem;
+            font-size: 0.9rem;
+            background: rgba(0, 0, 0, 0.4);
+        }
+        .correct-feedback {
+            border-left: 4px solid #6ade80;
+            background: rgba(106, 222, 128, 0.1);
+        }
+        .wrong-feedback {
+            border-left: 4px solid #ff8a6b;
+            background: rgba(255, 107, 107, 0.08);
+        }
+        .hint-btn {
+            background: none;
+            border: 1px dashed #6ade80;
+            border-radius: 2rem;
+            padding: 0.2rem 0.8rem;
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+            cursor: pointer;
+            color: #b0e0b0;
+        }
+        .hint-text {
+            display: none;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 0.6rem;
+            border-radius: 1rem;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+        }
+        .hint-text.show { display: block; }
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        .btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(106, 222, 128, 0.4);
+            border-radius: 2rem;
+            padding: 0.6rem 1.4rem;
+            cursor: pointer;
+            transition: 0.2s;
+            color: #e0ffe0;
+        }
+        .btn-primary {
+            background: #6ade80;
+            border-color: #6ade80;
+            color: #0a1a1a;
+            font-weight: bold;
+        }
+        .btn-primary:hover { background: #8eef9e; transform: scale(0.96);}
+        .progress {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        .mode-screen {
+            text-align: center;
+            padding: 1.5rem;
+        }
+        .mode-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+        .mode-btn {
+            background: #1a4a3a;
+            padding: 0.8rem 1.8rem;
+            font-size: 1.1rem;
+            min-width: 180px;
+            border: 1px solid #6ade80;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.75rem;
+            opacity: 0.5;
+        }
+        @media (max-width: 650px) {
+            body { padding: 1rem; }
+            .question-text { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="glow-sphere sphere-1"></div>
+<div class="glow-sphere sphere-2"></div>
+<div class="glow-sphere sphere-3"></div>
+
+<div class="container" id="mainApp"></div>
+<div class="footer">🌿 Биология 9 класс · Человек и окружающая среда</div>
+
+<script>
+    // ========= ВОПРОСЫ (16 штук) по теме «Человек и окружающая среда» =========
+    const QUESTIONS = [
+        { text: "Как называется наука о взаимоотношениях организмов между собой и с окружающей средой?", options: ["Экология", "Биология", "География", "Физиология"], correct: 0, hint: "Экология — от греч. oikos (дом) + logos (учение)." },
+        { text: "Какой фактор окружающей среды относится к абиотическим?", options: ["Хищничество", "Температура воздуха", "Конкуренция", "Симбиоз"], correct: 1, hint: "Абиотические — факторы неживой природы (свет, температура, влажность)." },
+        { text: "Что такое биотические факторы?", options: ["Факторы неживой природы", "Влияние человека", "Влияние живых организмов друг на друга", "Климатические условия"], correct: 2, hint: "Биотические — связанные с живыми существами." },
+        { text: "Какой антропогенный фактор наиболее сильно влияет на окружающую среду?", options: ["Вырубка лесов", "Промышленные выбросы", "Сельское хозяйство", "Все перечисленные"], correct: 3, hint: "Человек воздействует по всем направлениям." },
+        { text: "Что такое парниковый эффект?", options: ["Потепление климата из-за накопления CO₂", "Охлаждение планеты", "Разрушение озонового слоя", "Кислотные дожди"], correct: 0, hint: "CO₂, метан, водяной пар задерживают тепловое излучение." },
+        { text: "Какое вещество разрушает озоновый слой?", options: ["Углекислый газ", "Фреоны", "Сероводород", "Оксиды азота"], correct: 1, hint: "Фреоны (хлорфторуглероды) использовались в аэрозолях и холодильниках." },
+        { text: "Как называются виды, численность которых резко сокращается и они находятся под угрозой исчезновения?", options: ["Эндемики", "Редкие виды", "Космополиты", "Интродуценты"], correct: 1, hint: "Красная книга содержит редкие и исчезающие виды." },
+        { text: "Что такое мониторинг окружающей среды?", options: ["Система наблюдения за состоянием природы", "Охрана лесов", "Строительство очистных сооружений", "Утилизация отходов"], correct: 0, hint: "Мониторинг — слежение, оценка и прогноз." },
+        { text: "Какой тип загрязнения вызывают кислотные дожди?", options: ["Физическое", "Химическое", "Биологическое", "Тепловое"], correct: 1, hint: "Оксиды серы и азота → серная и азотная кислоты." },
+        { text: "Что такое биологическое разнообразие?", options: ["Разнообразие видов в экосистеме", "Количество особей", "Разнообразие ландшафтов", "Генетическое разнообразие"], correct: 0, hint: "Видовое разнообразие — основа устойчивости экосистем." },
+        { text: "Как называется совместное взаимовыгодное существование двух разных организмов?", options: ["Хищничество", "Паразитизм", "Симбиоз", "Конкуренция"], correct: 2, hint: "Симбиоз (например, лишайники — гриб + водоросль)." },
+        { text: "Что такое Красная книга?", options: ["Список редких и исчезающих видов", "Книга по экологии", "Закон об охране природы", "Отчёт о загрязнении"], correct: 0, hint: "Международная Красная книга была создана в 1966 году." },
+        { text: "Какой газ в основном отвечает за парниковый эффект?", options: ["Кислород", "Азот", "Углекислый газ", "Аргон"], correct: 2, hint: "CO₂ накапливается из-за сжигания топлива." },
+        { text: "Что такое экологический след человека?", options: ["Площадь территории, необходимая для его жизнедеятельности", "Количество выбросов", "Уровень потребления", "Степень загрязнения"], correct: 0, hint: "Экологический след измеряет нагрузку на планету." },
+        { text: "Какая международная конференция по климату была подписана в 2015 году?", options: ["Киотский протокол", "Парижское соглашение", "Монреальский протокол", "Рио-де-Жанейро"], correct: 1, hint: "Парижское соглашение — ограничение выбросов парниковых газов." },
+        { text: "Какой способ переработки отходов наиболее экологичен?", options: ["Сжигание", "Захоронение", "Вторичная переработка (рециклинг)", "Вывоз в океан"], correct: 2, hint: "Рециклинг сокращает потребление ресурсов и загрязнение." }
+    ];
+
+    const TOTAL = QUESTIONS.length;
+    let mode = null;
+    let currentIndex = 0;
+    let userAnswers = new Array(TOTAL).fill(null);
+    let answerStatus = new Array(TOTAL).fill(false);
+    let answered = new Array(TOTAL).fill(false);
+    let quizFinished = false;
+    let paperFinished = false;
+
+    const appDiv = document.getElementById("mainApp");
+
+    function updateScoreUI() {
+        if (mode !== 'screen') return;
+        const correctCount = answerStatus.filter(v => v === true).length;
+        const scoreSpan = document.getElementById("scoreDisplay");
+        if (scoreSpan) scoreSpan.innerText = `${correctCount} / ${TOTAL}`;
+    }
+
+    function evaluateQuestion(idx) {
+        const selected = userAnswers[idx];
+        if (selected === null) {
+            answerStatus[idx] = false;
+            return false;
+        }
+        const isCorrect = (selected === QUESTIONS[idx].correct);
+        answerStatus[idx] = isCorrect;
+        return isCorrect;
+    }
+
+    // ========== РЕЖИМ "НА ЭКРАНЕ" (интерактивная викторина) ==========
+    function onSelectOption_Screen(optIndex) {
+        if (quizFinished) return;
+        if (answered[currentIndex]) return;
+        userAnswers[currentIndex] = optIndex;
+        evaluateQuestion(currentIndex);
+        answered[currentIndex] = true;
+        updateScoreUI();
+        renderScreenQuestion();
+    }
+
+    function renderScreenQuestion() {
+        if (quizFinished) {
+            const correctTotal = answerStatus.filter(v => v === true).length;
+            const percentage = Math.round(correctTotal / TOTAL * 100);
+            let gradeMsg = "";
+            if (percentage >= 85) gradeMsg = "🌿 Отлично! Вы хорошо знаете экологию человека!";
+            else if (percentage >= 65) gradeMsg = "👍 Хорошо! Повторите факторы среды и глобальные проблемы.";
+            else gradeMsg = "📚 Попробуйте ещё раз. Внимательно читайте пояснения.";
+
+            let allItemsHtml = "";
+            for (let i = 0; i < TOTAL; i++) {
+                const q = QUESTIONS[i];
+                const userChoice = userAnswers[i];
+                const isUserCorrect = answerStatus[i];
+                const correctText = q.options[q.correct];
+                const userText = (userChoice !== null) ? q.options[userChoice] : "Нет ответа";
+                allItemsHtml += `
+                    <div style="background:rgba(0,0,0,0.3); border-radius:1rem; padding:0.8rem; margin-bottom:0.8rem;">
+                        <strong>${i+1}. ${escapeHtml(q.text)}</strong><br>
+                        <span style="color: ${isUserCorrect ? '#6ade80' : '#ff8a6b'};">${isUserCorrect ? '✅ Верно' : '❌ Ошибка'}</span><br>
+                        <span>📖 Правильный ответ: ${escapeHtml(correctText)}</span><br>
+                        ${!isUserCorrect ? `<span>✏️ Ваш ответ: ${escapeHtml(userText)}</span><br>` : ''}
+                        <div style="font-size:13px; opacity:0.7; margin-top:5px;">💡 ${q.hint}</div>
+                    </div>
+                `;
+            }
+
+            const finalHtml = `
+                <div class="glass-card" style="text-align:center;">
+                    <div style="font-size:1.8rem; font-weight:800;">🌱 РЕЗУЛЬТАТ</div>
+                    <div style="background:rgba(0,0,0,0.3); border-radius:1.2rem; padding:1rem; margin:1rem 0;">
+                        <span style="font-size:1.8rem; font-weight:800;">${correctTotal} / ${TOTAL}</span><br>${percentage}% — ${gradeMsg}
+                    </div>
+                    <div style="max-height:400px; overflow-y:auto;">${allItemsHtml}</div>
+                    <button id="restartScreenBtn" class="btn btn-primary" style="margin-top:1rem;">🔄 Пройти заново</button>
+                </div>
+            `;
+            appDiv.innerHTML = finalHtml;
+            document.getElementById("restartScreenBtn")?.addEventListener("click", () => startScreenMode());
+            return;
+        }
+
+        const q = QUESTIONS[currentIndex];
+        const selectedIdx = userAnswers[currentIndex];
+        const alreadyAnswered = answered[currentIndex];
+
+        let optionsHtml = "";
+        const letters = ['А', 'Б', 'В', 'Г'];
+        q.options.forEach((opt, idx) => {
+            let additionalClass = "";
+            if (alreadyAnswered) {
+                additionalClass = (idx === q.correct) ? "correct-feedback" : (idx === selectedIdx && idx !== q.correct) ? "wrong-feedback" : "";
+                if (additionalClass) additionalClass += " disabled";
+                else additionalClass = "disabled";
+            }
+            optionsHtml += `<button class="option-btn ${additionalClass}" data-opt="${idx}"><strong>${letters[idx]}</strong> ${escapeHtml(opt)}</button>`;
+        });
+
+        let feedbackHtml = "";
+        if (alreadyAnswered) {
+            const isCorrect = answerStatus[currentIndex];
+            const correctAnswer = q.options[q.correct];
+            feedbackHtml = `
+                <div class="feedback ${isCorrect ? 'correct-feedback' : 'wrong-feedback'}">
+                    ${isCorrect ? '✅ Верно!' : `❌ Неверно. Правильный ответ: ${correctAnswer}`}
+                    <div style="margin-top:6px;">💡 ${q.hint}</div>
+                </div>
+            `;
+        }
+
+        const answeredCount = answered.filter(a => a === true).length;
+        const progressPercent = Math.round(answeredCount / TOTAL * 100);
+        const isLast = (currentIndex === TOTAL - 1);
+        const nextText = isLast ? "🏁 Завершить" : "Следующий →";
+
+        const html = `
+            <div class="glass-card">
+                <div class="quiz-question">
+                    <div class="question-header">
+                        <span class="q-num">Вопрос ${currentIndex+1} / ${TOTAL}</span>
+                        <span class="q-type">🌍 Экология · Человек и среда</span>
+                    </div>
+                    <div class="question-text">${escapeHtml(q.text)}</div>
+                    <div class="options" id="optionsArea">${optionsHtml}</div>
+                    ${feedbackHtml}
+                    <div class="nav-buttons">
+                        <button id="prevBtn" class="btn" ${currentIndex === 0 ? 'disabled' : ''}>◀ Назад</button>
+                        <button id="nextBtn" class="btn btn-primary">${nextText}</button>
+                    </div>
+                    <div class="progress">✅ Отвечено: ${answeredCount} / ${TOTAL} (${progressPercent}%)</div>
+                </div>
+            </div>
+        `;
+        appDiv.innerHTML = html;
+
+        if (!alreadyAnswered) {
+            document.querySelectorAll('.option-btn:not(.disabled)').forEach(btn => {
+                const optIdx = parseInt(btn.dataset.opt);
+                btn.addEventListener('click', () => {
+                    if (!answered[currentIndex] && !quizFinished) onSelectOption_Screen(optIdx);
+                });
+            });
+        }
+
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        if (prevBtn) prevBtn.addEventListener('click', () => {
+            if (!quizFinished && currentIndex > 0) {
+                currentIndex--;
+                renderScreenQuestion();
+            }
+        });
+        if (nextBtn) nextBtn.addEventListener('click', () => {
+            if (quizFinished) return;
+            if (currentIndex === TOTAL - 1) {
+                finishScreenQuiz();
+            } else {
+                if (!answered[currentIndex]) return;
+                currentIndex++;
+                renderScreenQuestion();
+            }
+        });
+    }
+
+    function finishScreenQuiz() {
+        if (quizFinished) return;
+        for (let i = 0; i < TOTAL; i++) {
+            if (userAnswers[i] !== null) evaluateQuestion(i);
+            else answerStatus[i] = false;
+        }
+        quizFinished = true;
+        renderScreenQuestion();
+    }
+
+    function startScreenMode() {
+        mode = 'screen';
+        quizFinished = false;
+        currentIndex = 0;
+        userAnswers = new Array(TOTAL).fill(null);
+        answerStatus = new Array(TOTAL).fill(false);
+        answered = new Array(TOTAL).fill(false);
+        updateScoreUI();
+        renderScreenQuestion();
+    }
+
+    // ========== РЕЖИМ "НА ЛИСТОЧКЕ" (без проверки, только вопросы) ==========
+    let paperCurrentIndex = 0;
+
+    function renderPaperQuestion() {
+        if (paperFinished) {
+            let listHtml = `<div class="glass-card"><div class="question-text">📝 Вопросы для самопроверки (на листочке)</div><div class="final-list" style="max-height:500px; overflow-y:auto;">`;
+            QUESTIONS.forEach((q, idx) => {
+                const letters = ['А', 'Б', 'В', 'Г'];
+                const optionsStr = q.options.map((opt, i) => `${letters[i]}) ${escapeHtml(opt)}`).join(' · ');
+                listHtml += `<div style="padding:0.6rem; border-bottom:1px solid rgba(106,222,128,0.2);"><strong>${idx+1}. ${escapeHtml(q.text)}</strong><br><span style="opacity:0.6;">${optionsStr}</span></div>`;
+            });
+            listHtml += `</div><div class="nav-buttons" style="justify-content:center; margin-top:1rem;"><button id="restartPaperBtn" class="btn btn-primary">🔄 Выбрать режим заново</button></div></div>`;
+            appDiv.innerHTML = listHtml;
+            document.getElementById("restartPaperBtn")?.addEventListener("click", () => showModeSelection());
+            return;
+        }
+
+        const q = QUESTIONS[paperCurrentIndex];
+        const letters = ['А', 'Б', 'В', 'Г'];
+        let optionsHtml = '';
+        q.options.forEach((opt, idx) => {
+            optionsHtml += `<div class="option-btn" style="cursor:default; background:rgba(255,255,255,0.02);"><strong>${letters[idx]}</strong> ${escapeHtml(opt)}</div>`;
+        });
+
+        const isLast = (paperCurrentIndex === TOTAL - 1);
+        const html = `
+            <div class="glass-card">
+                <div class="quiz-question">
+                    <div class="question-header">
+                        <span class="q-num">Вопрос ${paperCurrentIndex+1} / ${TOTAL}</span>
+                        <span class="q-type">📄 Режим «На листочке»</span>
+                    </div>
+                    <div class="question-text">${escapeHtml(q.text)}</div>
+                    <div class="options">${optionsHtml}</div>
+                    <div class="nav-buttons">
+                        <button id="paperPrevBtn" class="btn" ${paperCurrentIndex === 0 ? 'disabled' : ''}>◀ Назад</button>
+                        <button id="paperNextBtn" class="btn btn-primary">${isLast ? '🏁 Завершить' : 'Следующий →'}</button>
+                    </div>
+                    <div class="progress">📌 Запишите ответ на листочек</div>
+                </div>
+            </div>
+        `;
+        appDiv.innerHTML = html;
+
+        const prevBtn = document.getElementById('paperPrevBtn');
+        const nextBtn = document.getElementById('paperNextBtn');
+        if (prevBtn) prevBtn.addEventListener('click', () => {
+            if (paperCurrentIndex > 0) {
+                paperCurrentIndex--;
+                renderPaperQuestion();
+            }
+        });
+        if (nextBtn) nextBtn.addEventListener('click', () => {
+            if (isLast) {
+                paperFinished = true;
+                renderPaperQuestion();
+            } else {
+                paperCurrentIndex++;
+                renderPaperQuestion();
+            }
+        });
+    }
+
+    function startPaperMode() {
+        mode = 'paper';
+        paperCurrentIndex = 0;
+        paperFinished = false;
+        renderPaperQuestion();
+    }
+
+    // ========== ЭКРАН ВЫБОРА РЕЖИМА ==========
+    function showModeSelection() {
+        mode = null;
+        const html = `
+            <div class="glass-card mode-screen">
+                <div>
+                    <div class="mode-title" style="font-size:1.6rem; font-weight:700;">🌍 Человек и окружающая среда</div>
+                    <div style="margin-top:0.5rem; opacity:0.7;">Биология 9 класс · 16 вопросов · Экология, факторы среды, глобальные проблемы</div>
+                </div>
+                <div class="mode-buttons">
+                    <button class="mode-btn btn" id="screenModeBtn">🖥️ На экране<br><small>выбор ответа, подсветка, баллы</small></button>
+                    <button class="mode-btn btn" id="paperModeBtn" style="background:#1a4a3a;">📄 На листочке<br><small>просто вопросы, ответы записываете отдельно</small></button>
+                </div>
+                <div class="mode-desc" style="margin-top: 1rem; font-size:0.85rem;">✔️ В режиме «На листочке» вы не выбираете ответ на экране — только читаете вопрос и варианты, а ответ пишете на бумаге. В конце покажется список всех вопросов.</div>
+            </div>
+        `;
+        appDiv.innerHTML = html;
+        document.getElementById("screenModeBtn")?.addEventListener("click", startScreenMode);
+        document.getElementById("paperModeBtn")?.addEventListener("click", startPaperMode);
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    showModeSelection();
+</script>
+</body>
+</html>
